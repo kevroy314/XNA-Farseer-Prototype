@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 
-namespace FarseerPhysics.SamplesFramework
+namespace KevinsDemo
 {
     /// <summary>
     ///   an enum of all available mouse buttons.

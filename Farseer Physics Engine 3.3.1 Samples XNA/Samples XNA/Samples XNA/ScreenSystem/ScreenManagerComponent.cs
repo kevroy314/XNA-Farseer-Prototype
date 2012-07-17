@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input.Touch;
 
-namespace FarseerPhysics.SamplesFramework
+namespace KevinsDemo
 {
     /// <summary>
     /// The screen manager is a component which manages one or more GameScreen

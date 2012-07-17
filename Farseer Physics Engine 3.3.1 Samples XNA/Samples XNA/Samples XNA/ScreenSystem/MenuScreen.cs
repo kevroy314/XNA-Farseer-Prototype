@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace FarseerPhysics.SamplesFramework
+namespace KevinsDemo
 {
     /// <summary>
     /// Base class for screens that contain a menu of options. The user can
@@ -264,9 +264,9 @@ namespace FarseerPhysics.SamplesFramework
                 _menuEntries[i].Update(isSelected, gameTime);
             }
 
-            _scrollUp.Update(gameTime);
-            _scrollDown.Update(gameTime);
-            _scrollSlider.Update(gameTime);
+            //_scrollUp.Update(gameTime);
+            //_scrollDown.Update(gameTime);
+            //_scrollSlider.Update(gameTime);
         }
 
         /// <summary>
@@ -295,11 +295,11 @@ namespace FarseerPhysics.SamplesFramework
 
             spriteBatch.DrawString(font, _menuTitle, _titlePosition - transitionOffset + Vector2.One * 2f, Color.Black, 0,
                                    _titleOrigin, 1f, SpriteEffects.None, 0);
-            spriteBatch.DrawString(font, _menuTitle, _titlePosition - transitionOffset, new Color(255, 210, 0), 0,
+            spriteBatch.DrawString(font, _menuTitle, _titlePosition - transitionOffset, Color.DarkRed, 0,
                                    _titleOrigin, 1f, SpriteEffects.None, 0);
-            _scrollUp.Draw();
-            _scrollSlider.Draw();
-            _scrollDown.Draw();
+            //_scrollUp.Draw();
+            //_scrollSlider.Draw();
+            //_scrollDown.Draw();
             spriteBatch.End();
         }
     }

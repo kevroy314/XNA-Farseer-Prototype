@@ -3,7 +3,7 @@ using FarseerPhysics.Collision.Shapes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace FarseerPhysics.SamplesFramework
+namespace KevinsDemo
 {
     public class LineBatch : IDisposable
     {

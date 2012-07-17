@@ -1,4 +1,4 @@
-﻿namespace FarseerPhysics.SamplesFramework
+﻿namespace KevinsDemo
 {
     public interface IDemoScreen
     {

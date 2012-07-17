@@ -1,4 +1,4 @@
-namespace FarseerPhysics.SamplesFramework
+namespace KevinsDemo
 {
     internal static class Program
     {
@@ -7,7 +7,7 @@ namespace FarseerPhysics.SamplesFramework
         /// </summary>
         private static void Main(string[] args)
         {
-            using (FarseerPhysicsGame game = new FarseerPhysicsGame())
+            using (GameMain game = new GameMain())
             {
                 game.Run();
             }

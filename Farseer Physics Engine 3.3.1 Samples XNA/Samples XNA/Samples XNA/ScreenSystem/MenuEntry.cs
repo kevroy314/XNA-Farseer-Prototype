@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace FarseerPhysics.SamplesFramework
+namespace KevinsDemo
 {
     public enum EntryType
     {
@@ -152,12 +152,12 @@ namespace FarseerPhysics.SamplesFramework
             Color color;
             if (_type == EntryType.Separator)
             {
-                color = Color.DarkOrange;
+                color = Color.DarkRed;
             }
             else
             {
                 // Draw the selected entry in yellow, otherwise white
-                color = Color.Lerp(Color.White, new Color(255, 210, 0), _selectionFade);
+                color = Color.Lerp(Color.White, Color.LightBlue, _selectionFade);
             }
             color *= _alpha;
 
