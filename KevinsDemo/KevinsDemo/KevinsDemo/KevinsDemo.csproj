@@ -174,7 +174,7 @@
       <Project>{17F52B57-384E-4A56-91BF-BE0F1783E75C}</Project>
       <Name>KevinsEffects</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Samples XNAContent\KevinsDemoContent.contentproj">
+    <ProjectReference Include="..\KevinsDemoContent\KevinsDemoContent.contentproj">
       <Project>{C8D1B1FB-E7FA-4BCF-BC8A-4D5D93429F67}</Project>
       <Name>KevinsDemoContent %28Content%29</Name>
       <XnaReferenceType>Content</XnaReferenceType>

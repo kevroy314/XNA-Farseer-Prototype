@@ -28,12 +28,23 @@ namespace KevinsDemo.CharacterSystem
         private float _scale;
         //The speed of the users motion
         private float _speed;
+        //Locations in the overall texture of unique character sprites
+        private Rectangle[,] _characterSpriteLocations;
+        //The index of the current character sprite
+        private int _currentCharacterSpriteX;
+        private int _currentCharacterSpriteY;
+        //Sprite sizes
+        private int _numSpritesWidth = 4;
+        private int _numSpritesHeight = 4;
+        //Variables for slowing down the sprite animation
+        private int _spriteTransitionDelay;
+        private float _spriteTransitionCounter;
 
         public Character(World world, ContentManager content)
         {
             //Load agent and collision textures
             _agentTextures = content.Load<Texture2D>("chrono");
-            _agentCollisionTextures = content.Load<Texture2D>("chrono_collisionBox");
+            _agentCollisionTextures = content.Load<Texture2D>("chrono_collisionBox_Small");
 
             //Create an array to hold the data from the texture
             uint[] data = new uint[_agentCollisionTextures.Width * _agentCollisionTextures.Height];
@@ -84,14 +95,26 @@ namespace KevinsDemo.CharacterSystem
             _agentBody.Position += new Vector2(10f, 10f);
 
             //Speed of the player movement
-            _speed = 0.4f;
+            _speed = 0.6f;
+
+            _characterSpriteLocations = new Rectangle[_numSpritesWidth, _numSpritesHeight];
+
+            for (int y = 0; y < _numSpritesHeight; y++)
+                for (int x = 0; x < _numSpritesWidth; x++)
+                    _characterSpriteLocations[x, y] = new Rectangle(_agentTextures.Bounds.Width / _numSpritesWidth * x, _agentTextures.Bounds.Height / _numSpritesHeight * y + 1, _agentTextures.Bounds.Width / _numSpritesWidth, _agentTextures.Bounds.Height / _numSpritesHeight);
+
+            _currentCharacterSpriteX = 0;
+            _currentCharacterSpriteY = 0;
+
+            _spriteTransitionDelay = (int)(_speed * _numSpritesWidth * 4f);
+            _spriteTransitionCounter = 0;
         }
 
         public void Draw(SpriteBatch batch)
         {
             //Draw the texture at its current position
             batch.Draw(_agentTextures, ConvertUnits.ToDisplayUnits(_agentBody.Position),
-                                           null, Color.White, _agentBody.Rotation, _origin, _scale, SpriteEffects.None,
+                                           _characterSpriteLocations[_currentCharacterSpriteX, _currentCharacterSpriteY], Color.White, _agentBody.Rotation, _origin, _scale, SpriteEffects.None,
                                            0f);
         }
 
@@ -101,14 +124,58 @@ namespace KevinsDemo.CharacterSystem
 
         public void HandleInput(InputHelper input, GameTime gameTime)
         {
+            bool up = false;
+            bool down = false;
+            bool left = false;
+            bool right = false;
             if (input.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.W))
+            {
+                up = true;
                 _agentBody.ApplyLinearImpulse(new Vector2(0.0f, -_speed));
-            if (input.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.A))
-                _agentBody.ApplyLinearImpulse(new Vector2(-_speed, 0.0f));
+            }
             if (input.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.S))
+            {
+                down = true;
                 _agentBody.ApplyLinearImpulse(new Vector2(0.0f, _speed));
+            }
+            if (input.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.A))
+            {
+                left = true;
+                _agentBody.ApplyLinearImpulse(new Vector2(-_speed, 0.0f));
+            }
             if (input.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.D))
+            {
+                right = true;
                 _agentBody.ApplyLinearImpulse(new Vector2(_speed, 0.0f));
+            }
+            if (left)
+            {
+                _currentCharacterSpriteY = 1;
+                _spriteTransitionCounter = (_spriteTransitionCounter + 1f) % _spriteTransitionDelay;
+                if (_spriteTransitionCounter == 0)
+                    _currentCharacterSpriteX = (_currentCharacterSpriteX + 1) % _numSpritesWidth;
+            }
+            else if (right)
+            {
+                _currentCharacterSpriteY = 2;
+                _spriteTransitionCounter = (_spriteTransitionCounter + 1f) % _spriteTransitionDelay;
+                if (_spriteTransitionCounter == 0)
+                    _currentCharacterSpriteX = (_currentCharacterSpriteX + 1) % _numSpritesWidth;
+            }
+            else if (up)
+            {
+                _currentCharacterSpriteY = 3;
+                _spriteTransitionCounter = (_spriteTransitionCounter + 1f) % _spriteTransitionDelay;
+                if (_spriteTransitionCounter == 0)
+                    _currentCharacterSpriteX = (_currentCharacterSpriteX + 1) % _numSpritesWidth;
+            }
+            else if (down)
+            {
+                _currentCharacterSpriteY = 0;
+                _spriteTransitionCounter = (_spriteTransitionCounter + 1f) % _spriteTransitionDelay;
+                if (_spriteTransitionCounter == 0)
+                    _currentCharacterSpriteX = (_currentCharacterSpriteX + 1) % _numSpritesWidth;
+            }
         }
 
         public Body Body
