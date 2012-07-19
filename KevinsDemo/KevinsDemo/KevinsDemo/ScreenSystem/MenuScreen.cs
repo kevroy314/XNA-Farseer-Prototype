@@ -47,9 +47,20 @@ namespace KevinsDemo.ScreenSystem
             HasCursor = true;
         }
 
+        public string MenuTitle
+        {
+            get { return _menuTitle; }
+        }
+
         public void AddMenuItem(string name, EntryType type, GameScreen screen)
         {
             MenuEntry entry = new MenuEntry(this, name, type, screen);
+            _menuEntries.Add(entry);
+        }
+
+        public void AddMenuItem(MenuEntry.SettingsChangeDisplayUpdate displayChangeUpdate, EntryType type, MenuEntry.SettingsChangeDelegate settingsChange, object settingsChangeParameter)
+        {
+            MenuEntry entry = new MenuEntry(this, displayChangeUpdate, type, settingsChange);
             _menuEntries.Add(entry);
         }
 
@@ -160,6 +171,10 @@ namespace KevinsDemo.ScreenSystem
                         ScreenManager.AddScreen(
                             new MessageBoxScreen((_menuEntries[_selectedEntry].Screen as IDemoScreen).GetDetails()));
                     }
+                }
+                else if (_menuEntries[_selectedEntry].SettingsChange != null)
+                {
+                    _menuEntries[_selectedEntry].ModifyOption(null);
                 }
             }
             else if (input.IsMenuCancel())

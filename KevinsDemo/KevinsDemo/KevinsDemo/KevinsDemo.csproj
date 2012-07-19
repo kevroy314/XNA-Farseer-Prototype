@@ -119,6 +119,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FullScreenEffects\VariableBlurEffect.cs" />
+    <Compile Include="GlobalGameOptions.cs" />
     <Compile Include="ParticleObjects\Campfire.cs" />
     <Compile Include="ParticleSystem\DefaultTexturedQuadParticleSystemTemplate.cs" />
     <Compile Include="EnvironmentSystem\Building.cs" />
@@ -170,15 +172,6 @@
     <ProjectReference Include="..\..\DebugView XNA\DebugView XNA.csproj">
       <Project>{FC7845FA-13FE-4FF8-822A-A577F3F59B00}</Project>
       <Name>DebugView XNA</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\KevinsEffects\KevinsEffectsContent\KevinsEffectsContent.contentproj">
-      <Project>{760E4E68-23EE-4BCD-BD6B-76E5C9912262}</Project>
-      <Name>KevinsEffectsContent %28Content%29</Name>
-      <XnaReferenceType>Content</XnaReferenceType>
-    </ProjectReference>
-    <ProjectReference Include="..\..\KevinsEffects\KevinsEffects\KevinsEffects.csproj">
-      <Project>{17F52B57-384E-4A56-91BF-BE0F1783E75C}</Project>
-      <Name>KevinsEffects</Name>
     </ProjectReference>
     <ProjectReference Include="..\KevinsDemoContent\KevinsDemoContent.contentproj">
       <Project>{C8D1B1FB-E7FA-4BCF-BC8A-4D5D93429F67}</Project>

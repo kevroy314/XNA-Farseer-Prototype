@@ -59,6 +59,10 @@ namespace KevinsDemo
 
             SimpleLevel samplelevel1 = new SimpleLevel(this);
 
+            MenuScreen optionsScreen = new MenuScreen("Options");
+
+            optionsScreen.AddMenuItem(GlobalGameOptions.getMusicStateString, EntryType.OptionsItem, GlobalGameOptions.toggleMusic, null);
+
             MenuScreen menuScreen = new MenuScreen("");
 
             menuScreen.AddMenuItem("", EntryType.Separator, null);
@@ -67,6 +71,8 @@ namespace KevinsDemo
 
             menuScreen.AddMenuItem("Game Levels", EntryType.Separator, null);
             menuScreen.AddMenuItem(samplelevel1.GetTitle(), EntryType.Screen, samplelevel1);
+
+            menuScreen.AddMenuItem(optionsScreen.MenuTitle, EntryType.Screen, optionsScreen);
 
             menuScreen.AddMenuItem("", EntryType.Separator, null);
             menuScreen.AddMenuItem("", EntryType.Separator, null);

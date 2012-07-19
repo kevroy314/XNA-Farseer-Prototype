@@ -12,7 +12,7 @@ using FarseerPhysics.Factories;
 using KevinsDemo.ScreenSystem;
 using KevinsDemo.CharacterSystem;
 using KevinsDemo.EnvironmentSystem;
-using KevinsEffects.FullScreenEffects;
+using KevinsDemo.FullScreenEffects;
 using DPSF;
 using DPSF.ParticleSystems;
 using ParticleObjects;
@@ -110,15 +110,16 @@ namespace KevinsDemo.LevelSystem
             //There is no gravity
             World.Gravity = Vector2.Zero;
 
+            GlobalGameOptions.currentSong = _backgroundMusic;
             MediaPlayer.IsRepeating = true;
-            MediaPlayer.Play(_backgroundMusic);
+            if (GlobalGameOptions.musicOn)
+                MediaPlayer.Play(_backgroundMusic);
         }
 
         public override void UnloadContent()
         {
             _blur.UnloadContent();
             _fire.UnloadContent();
-            MediaPlayer.Stop();
             base.UnloadContent();
         }
 

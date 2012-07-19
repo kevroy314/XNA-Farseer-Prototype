@@ -8,6 +8,7 @@ namespace KevinsDemo.ScreenSystem
     {
         Screen,
         Separator,
+        OptionsItem,
         ExitItem
     }
 
@@ -33,7 +34,10 @@ namespace KevinsDemo.ScreenSystem
 
         private float _scale;
         private GameScreen _screen;
-
+        public delegate object SettingsChangeDelegate(object param);
+        private SettingsChangeDelegate _settingsChange;
+        public delegate string SettingsChangeDisplayUpdate();
+        private SettingsChangeDisplayUpdate _displayUpdateFunction;
         /// <summary>
         /// Tracks a fading selection effect on the entry.
         /// </summary>
@@ -61,8 +65,20 @@ namespace KevinsDemo.ScreenSystem
             _menu = menu;
             _scale = 0.9f;
             _alpha = 1.0f;
+            _settingsChange = null;
         }
 
+        public MenuEntry(MenuScreen menu, SettingsChangeDisplayUpdate displayUpdateFunction, EntryType type, SettingsChangeDelegate settingsChange)
+        {
+            _text = displayUpdateFunction();
+            _screen = null;
+            _type = type;
+            _menu = menu;
+            _scale = 0.9f;
+            _alpha = 1.0f;
+            _settingsChange = settingsChange;
+            _displayUpdateFunction = displayUpdateFunction;
+        }
 
         /// <summary>
         /// Gets or sets the text of this menu entry.
@@ -93,6 +109,16 @@ namespace KevinsDemo.ScreenSystem
             get { return _screen; }
         }
 
+        public SettingsChangeDelegate SettingsChange
+        {
+            get { return _settingsChange; }
+        }
+
+        public SettingsChangeDisplayUpdate DisplayUpdateFunction
+        {
+            get { return _displayUpdateFunction; }
+        }
+
         public void Initialize()
         {
             SpriteFont font = _menu.ScreenManager.Fonts.MenuSpriteFont;
@@ -111,6 +137,17 @@ namespace KevinsDemo.ScreenSystem
         public bool IsSelectable()
         {
             return _type != EntryType.Separator;
+        }
+
+        public bool IsOptionsItem()
+        {
+            return _type != EntryType.OptionsItem;
+        }
+
+        public void ModifyOption(object param)
+        {
+            _settingsChange(param);
+            _text = _displayUpdateFunction();
         }
 
         /// <summary>
