@@ -68,6 +68,9 @@
     <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DPSF">
+      <HintPath>..\..\..\..\..\..\..\..\DPSF\DPSF Demo\DPSF Demo\DPSF Demo\bin\x86\Release\DPSF.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <Private>False</Private>
     </Reference>
@@ -116,10 +119,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ParticleObjects\Campfire.cs" />
+    <Compile Include="ParticleSystem\DefaultTexturedQuadParticleSystemTemplate.cs" />
     <Compile Include="EnvironmentSystem\Building.cs" />
     <Compile Include="CharacterSystem\Character.cs" />
     <Compile Include="CharacterSystem\CharacterInputHandler.cs" />
     <Compile Include="DrawingSystem\LineBatch.cs" />
+    <Compile Include="ParticleSystem\FirePS.cs" />
     <Compile Include="LevelSystem\SimpleLevel.cs" />
     <Compile Include="ScreenSystem\FramerateCounterComponent.cs" />
     <Compile Include="DrawingSystem\AssetCreator.cs" />

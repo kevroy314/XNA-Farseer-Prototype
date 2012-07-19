@@ -74,7 +74,7 @@ namespace KevinsEffects.FullScreenEffects
             blurWaitLength = beatNumberOfWaitFrames;
         }
 
-        public void Update(GameTime gameTime)
+        public float Update(GameTime gameTime)
         {
             //Iterate the blur counter
             blurCount = (blurCount + 1) % (blurParamsHoriz.Length + blurWaitLength);
@@ -82,6 +82,7 @@ namespace KevinsEffects.FullScreenEffects
             //Determine if we're in a wait state, and what frame to generate
             if (blurCount >= blurParamsHoriz.Length) blurFrameCount = 0;
             else blurFrameCount = blurCount;
+            return (float)blurFrameCount/(float)blurParamsHoriz.Length;
         }
 
         public void UnloadContent()

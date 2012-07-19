@@ -222,14 +222,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Samples\0.png">
-      <Name>0</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="chrono.png">
+    <Compile Include="CharacterSprites\chrono.png">
       <Name>chrono</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
@@ -258,11 +251,152 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="CharacterSprites\" />
+    <Compile Include="EnvironmentObjects\Tents\hunter_135.png">
+      <Name>hunter_135</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="EnvironmentObjects\Tents\hunter_225.png">
+      <Name>hunter_225</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="EnvironmentObjects\Tents\hunter_315.png">
+      <Name>hunter_315</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="EnvironmentObjects\Tents\hunter_45.png">
+      <Name>hunter_45</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="EnvironmentObjects\Tents\lumberjack_135.png">
+      <Name>lumberjack_135</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="EnvironmentObjects\Tents\lumberjack_225.png">
+      <Name>lumberjack_225</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="EnvironmentObjects\Tents\lumberjack_315.png">
+      <Name>lumberjack_315</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="EnvironmentObjects\Tents\lumberjack_45.png">
+      <Name>lumberjack_45</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="EnvironmentObjects\Tents\pavilion_135.png">
+      <Name>pavilion_135</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="EnvironmentObjects\Tents\pavilion_225.png">
+      <Name>pavilion_225</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="EnvironmentObjects\Tents\pavilion_315.png">
+      <Name>pavilion_315</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="EnvironmentObjects\Tents\pavilion_45.png">
+      <Name>pavilion_45</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="EnvironmentObjects\Tents\storagetent_135.png">
+      <Name>storagetent_135</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="EnvironmentObjects\Tents\storagetent_225.png">
+      <Name>storagetent_225</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="EnvironmentObjects\Tents\storagetent_315.png">
+      <Name>storagetent_315</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="EnvironmentObjects\Tents\storagetent_45.png">
+      <Name>storagetent_45</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="chrono_collisionBox_Small.png">
+    <Compile Include="CharacterSprites\chrono_collisionBox_Small.png">
       <Name>chrono_collisionBox_Small</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Fonts\font.spritefont">
+      <Name>font</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Fire.png">
+      <Name>Fire</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Smoke.png">
+      <Name>Smoke</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="EnvironmentObjects\logs.png">
+      <Name>logs</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Music\bgMusic.mp3">
+      <Name>bgMusic</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SongProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="SoundEffects\beat.wav">
+      <Name>beat</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="SoundEffects\doublebeat.wav">
+      <Name>doublebeat</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="SoundEffects\heartbeat-01.mp3">
+      <Name>heartbeat-01</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SongProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BackgroundTextures\snowiso.jpg">
+      <Name>snowiso</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="BackgroundTextures\snowtop.jpg">
+      <Name>snowtop</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

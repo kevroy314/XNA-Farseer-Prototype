@@ -57,7 +57,7 @@ namespace KevinsDemo
         {
             base.Initialize();
 
-            SimpleLevel samplelevel1 = new SimpleLevel();
+            SimpleLevel samplelevel1 = new SimpleLevel(this);
 
             MenuScreen menuScreen = new MenuScreen("");
 

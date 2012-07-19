@@ -13,6 +13,11 @@ using KevinsDemo.ScreenSystem;
 using KevinsDemo.CharacterSystem;
 using KevinsDemo.EnvironmentSystem;
 using KevinsEffects.FullScreenEffects;
+using DPSF;
+using DPSF.ParticleSystems;
+using ParticleObjects;
+using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Audio;
 
 namespace KevinsDemo.LevelSystem
 {
@@ -23,13 +28,26 @@ namespace KevinsDemo.LevelSystem
         //Render target for the post-processed blur effect
         private RenderTarget2D _blurredRT;
 
+        private Song _backgroundMusic;
+        private SoundEffect _heartBeat;
+
         //The character
         private Character _pc;
         //The test building
-        private Building _building;
+        private Building[] _buildings;
 
         //The blur effect
         private VariableBlurEffect _blur;
+
+        //The campfire
+        private Campfire _fire;
+
+        private Game _parentGame;
+
+        public SimpleLevel(Game g)
+        {
+            _parentGame = g;
+        }
 
         #region IDemoScreen Members
 
@@ -41,7 +59,7 @@ namespace KevinsDemo.LevelSystem
         public string GetDetails()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("Sample of a basic leve for test purposes.");
+            sb.AppendLine("Sample of a basic level for test purposes.");
             sb.AppendLine(string.Empty);
             sb.AppendLine("Keyboard:");
             sb.AppendLine("  - Movement: W, A, S, D");
@@ -59,8 +77,24 @@ namespace KevinsDemo.LevelSystem
             _RT = new RenderTarget2D(ScreenManager.GraphicsDevice, ScreenManager.GraphicsDevice.Viewport.Bounds.Width, ScreenManager.GraphicsDevice.Viewport.Bounds.Height, false, ScreenManager.GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.None);
             _blurredRT = new RenderTarget2D(ScreenManager.GraphicsDevice, ScreenManager.GraphicsDevice.Viewport.Bounds.Width, ScreenManager.GraphicsDevice.Viewport.Bounds.Height, false, ScreenManager.GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.None);
 
-            //Create the test building
-            _building = new Building(World, ScreenManager.Content);
+            _backgroundMusic = ScreenManager.Content.Load<Song>("Music/bgMusic");
+
+            _heartBeat = ScreenManager.Content.Load<SoundEffect>("SoundEffects/doublebeat");
+
+            //Create the test buildings
+            _buildings = new Building[6];
+            string[] buildingTypes = { "pavilion_45", "hunter_315", "hunter_225", "storagetent_135", "lumberjack_45", "hunter_45" };
+            for (int i = 0; i < _buildings.Length; i++)
+            {
+                float cos = (float)Math.Cos(((float)i / (float)_buildings.Length) * Math.PI * 2);
+                float sin = (float)Math.Sin(((float)i / (float)_buildings.Length) * Math.PI * 2);
+                float r = 13f;
+                float xpos = cos * r;
+                float ypos = sin * r;
+                _buildings[i] = new Building(World, ScreenManager.Content, new Vector2(xpos, ypos), 0, false, "EnvironmentObjects/Tents/" + buildingTypes[i]);
+            }
+
+            _fire = new Campfire(_parentGame, World, ScreenManager.SpriteBatch, Vector2.Zero);
 
             //Create the character
             _pc = new Character(World, ScreenManager.Content);
@@ -75,16 +109,30 @@ namespace KevinsDemo.LevelSystem
 
             //There is no gravity
             World.Gravity = Vector2.Zero;
+
+            MediaPlayer.IsRepeating = true;
+            MediaPlayer.Play(_backgroundMusic);
+        }
+
+        public override void UnloadContent()
+        {
+            _blur.UnloadContent();
+            _fire.UnloadContent();
+            MediaPlayer.Stop();
+            base.UnloadContent();
         }
 
         public override void Draw(GameTime gameTime)
         {
             ScreenManager.GraphicsDevice.SetRenderTarget(_RT);
             ScreenManager.GraphicsDevice.Clear(Color.Black);
-            ScreenManager.SpriteBatch.Begin(0, null, null, null, null, null, Camera.View);
-            _building.Draw(ScreenManager.SpriteBatch);
+            ScreenManager.SpriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, Camera.View);
+            for(int i = 0; i < _buildings.Length;i++)
+                _buildings[i].Draw(ScreenManager.SpriteBatch);
+            _fire.Draw(ScreenManager.SpriteBatch, new Vector3(-Camera.Position, 200f));
             _pc.Draw(ScreenManager.SpriteBatch);
             ScreenManager.SpriteBatch.End();
+            _fire.DrawParticles();
             _blurredRT = _blur.RenderFrame(ScreenManager.GraphicsDevice,ScreenManager.SpriteBatch,_RT,gameTime);
             //Set the render target to the screen and draw the blurred frame
             ScreenManager.GraphicsDevice.SetRenderTarget(null);
@@ -97,7 +145,10 @@ namespace KevinsDemo.LevelSystem
         public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
         {
             _pc.Update(gameTime);
-            _blur.Update(gameTime);
+            float blurProgress = _blur.Update(gameTime);
+            if (MathHelper.Distance(blurProgress, 0.25f) < 0.05f)
+                _heartBeat.Play();
+            _fire.Update(gameTime, new Vector3(Camera.Position, 200f));
             base.Update(gameTime, otherScreenHasFocus, coveredByOtherScreen);
         }
 

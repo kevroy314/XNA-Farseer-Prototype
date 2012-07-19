@@ -20,11 +20,14 @@ namespace KevinsDemo.EnvironmentSystem
         private Vector2 _origin;
         private Texture2D _polygonTexture;
         private float _scale;
+        private bool flipHorizontal;
 
-        public Building(World world, ContentManager content)
+        public Building(World world, ContentManager content, Vector2 position, float rotation, bool flippedHorizontally, string contentItem)
         {
+            flipHorizontal = flippedHorizontally;
+
             //load texture that will represent the physics body
-            _polygonTexture = content.Load<Texture2D>("Samples/0");
+            _polygonTexture = content.Load<Texture2D>(contentItem);
 
             //Create an array to hold the data from the texture
             uint[] data = new uint[_polygonTexture.Width * _polygonTexture.Height];
@@ -53,7 +56,7 @@ namespace KevinsDemo.EnvironmentSystem
             List<Vertices> list = BayazitDecomposer.ConvexPartition(textureVertices);
 
             //Adjust the scale of the object
-            _scale = 1f;
+            _scale = 2f;
 
             //scale the vertices from graphics space to sim space
             Vector2 vertScale = new Vector2(ConvertUnits.ToSimUnits(1)) * _scale;
@@ -66,12 +69,14 @@ namespace KevinsDemo.EnvironmentSystem
             _compound = BodyFactory.CreateCompoundPolygon(world, list, 1f, BodyType.Dynamic);
             _compound.BodyType = BodyType.Static;
             _compound.CollidesWith = Category.All;
+            _compound.Position = position;
+            _compound.Rotation = rotation;
         }
 
         public void Draw(SpriteBatch batch)
         {
             batch.Draw(_polygonTexture, ConvertUnits.ToDisplayUnits(_compound.Position),
-                                           null, Color.White, _compound.Rotation, _origin, _scale, SpriteEffects.None,
+                null, Color.White, _compound.Rotation, _origin, _scale, flipHorizontal ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                                            0f);
         }
     }

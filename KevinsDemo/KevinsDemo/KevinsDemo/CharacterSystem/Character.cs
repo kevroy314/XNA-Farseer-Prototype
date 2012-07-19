@@ -43,8 +43,8 @@ namespace KevinsDemo.CharacterSystem
         public Character(World world, ContentManager content)
         {
             //Load agent and collision textures
-            _agentTextures = content.Load<Texture2D>("chrono");
-            _agentCollisionTextures = content.Load<Texture2D>("chrono_collisionBox_Small");
+            _agentTextures = content.Load<Texture2D>("CharacterSprites/chrono");
+            _agentCollisionTextures = content.Load<Texture2D>("CharacterSprites/chrono_collisionBox_Small");
 
             //Create an array to hold the data from the texture
             uint[] data = new uint[_agentCollisionTextures.Width * _agentCollisionTextures.Height];
@@ -175,6 +175,11 @@ namespace KevinsDemo.CharacterSystem
                 _spriteTransitionCounter = (_spriteTransitionCounter + 1f) % _spriteTransitionDelay;
                 if (_spriteTransitionCounter == 0)
                     _currentCharacterSpriteX = (_currentCharacterSpriteX + 1) % _numSpritesWidth;
+            }
+            else
+            {
+                _spriteTransitionCounter = 0;
+                _currentCharacterSpriteX = 0;
             }
         }
 
