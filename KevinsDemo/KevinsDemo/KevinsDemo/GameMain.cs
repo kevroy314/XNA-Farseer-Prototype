@@ -2,6 +2,8 @@ using System;
 using Microsoft.Xna.Framework;
 using KevinsDemo.LevelSystem;
 using KevinsDemo.ScreenSystem;
+using KevinsDemo.UIElements;
+using Microsoft.Xna.Framework.Input;
 
 namespace KevinsDemo
 {
@@ -46,7 +48,7 @@ namespace KevinsDemo
         }
 
         public ScreenManager ScreenManager { get; set; }
-
+        Slider testSlider;
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -80,6 +82,21 @@ namespace KevinsDemo
             ScreenManager.AddScreen(new BackgroundScreen());
             ScreenManager.AddScreen(menuScreen);
             ScreenManager.AddScreen(new LogoScreen(TimeSpan.FromSeconds(3.0)));
+
+            testSlider = new Slider(ScreenManager, new Vector2(100f, 100f), new Vector2(300f, 30f), 0.5f, Color.Red, Slider.SliderType.HorizontalSlider);
+        }
+
+        protected override void Draw(GameTime gameTime)
+        {
+            base.Draw(gameTime);
+            testSlider.Draw();
+        }
+
+        protected override void Update(GameTime gameTime)
+        {
+            if (Mouse.GetState().LeftButton == ButtonState.Pressed)
+                testSlider.Update(new Vector2(Mouse.GetState().X, Mouse.GetState().Y));
+            base.Update(gameTime);
         }
     }
 }

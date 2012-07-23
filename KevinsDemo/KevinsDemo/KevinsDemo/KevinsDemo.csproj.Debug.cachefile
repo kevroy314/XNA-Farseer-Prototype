@@ -50,6 +50,10 @@ Content\SoundEffects\heartbeat-01.xnb
 Content\SoundEffects\beat.xnb
 Content\SoundEffects\doublebeat.xnb
 Content\Effects\Blur.xnb
+Content\UIElements\sliderBar.xnb
+Content\UIElements\sliderEnd.xnb
+Content\UIElements\sliderMarker.xnb
+Content\UIElements\sliderMiddle.xnb
 Content\Music\bgMusic.wma
 Content\SoundEffects\heartbeat-01.wma
 Content\font.xnb

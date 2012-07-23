@@ -161,6 +161,7 @@
     <Compile Include="ScreenSystem\VirtualButton.cs" />
     <Compile Include="ScreenSystem\VirtualStick.cs" />
     <Compile Include="SoundEffectsManager.cs" />
+    <Compile Include="UIElements\Slider.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
