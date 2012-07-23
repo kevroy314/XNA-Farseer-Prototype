@@ -1,24 +1,21 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace KevinsDemo.ScreenSystem
 {
-    /// <summary>
-    /// Base class for screens that contain a menu of options. The user can
-    /// move up and down to select an entry, or cancel to back out of the screen.
-    /// </summary>
-    public class MenuScreen : GameScreen
+    public class PauseScreen : GameScreen
     {
-#if WINDOWS || XBOX
+        #if WINDOWS || XBOX
         private const float NumEntries = 15;
 #elif WINDOWS_PHONE
         private const float NumEntries = 9;
 #endif
         private List<MenuEntry> _menuEntries = new List<MenuEntry>();
         private string _menuTitle;
-        private bool _isMainMenu;
         private Vector2 _titlePosition;
         private Vector2 _titleOrigin;
         private int _selectedEntry;
@@ -35,14 +32,20 @@ namespace KevinsDemo.ScreenSystem
         private MenuButton _scrollDown;
         private MenuButton _scrollSlider;
         private bool _scrollLock;
-        
+
+        private GameScreen _activeGameScreen;
         /// <summary>
         /// Constructor.
         /// </summary>
-        public MenuScreen(string menuTitle, bool isMainMenu)
+        public PauseScreen(GameScreen activeGameScreen)
         {
-            _menuTitle = menuTitle;
-            _isMainMenu = isMainMenu;
+            _menuTitle = "Paused";
+            _activeGameScreen = activeGameScreen;
+            AddMenuItem("Return to Game", EntryType.ScreenExitItem, null, false);
+            AddMenuItem("Options", EntryType.Screen, GlobalGameOptions.OptionsMenu, false);
+            AddMenuItem("Exit to Main Menu", EntryType.ScreenExitItem, null, true);
+            AddMenuItem("", EntryType.Separator, null);
+            AddMenuItem("Exit to Desktop", EntryType.GlobalExitItem, null);
             TransitionOnTime = TimeSpan.FromSeconds(0.7);
             TransitionOffTime = TimeSpan.FromSeconds(0.7);
             HasCursor = true;
@@ -56,6 +59,12 @@ namespace KevinsDemo.ScreenSystem
         public void AddMenuItem(string name, EntryType type, GameScreen screen)
         {
             MenuEntry entry = new MenuEntry(this, name, type, screen);
+            _menuEntries.Add(entry);
+        }
+
+        public void AddMenuItem(string name, EntryType type, GameScreen screen, bool closeParentScreen)
+        {
+            MenuEntry entry = new MenuEntry(this, name, type, screen, closeParentScreen);
             _menuEntries.Add(entry);
         }
 
@@ -167,6 +176,8 @@ namespace KevinsDemo.ScreenSystem
                 else if (_menuEntries[_selectedEntry].IsScreenExitItem())
                 {
                     ExitScreen();
+                    if (_menuEntries[_selectedEntry].CloseParentScreen)
+                        _activeGameScreen.ExitScreen();
                 }
                 else if (_menuEntries[_selectedEntry].LinkScreen != null)
                 {
@@ -185,8 +196,6 @@ namespace KevinsDemo.ScreenSystem
             else if (input.IsMenuCancel())
             {
                 this.ExitScreen();
-                if(_isMainMenu)
-                    ScreenManager.Game.Exit();
             }
 
             if (input.IsMenuPressed())

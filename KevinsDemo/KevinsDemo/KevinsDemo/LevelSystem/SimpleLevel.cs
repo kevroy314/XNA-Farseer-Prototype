@@ -110,10 +110,8 @@ namespace KevinsDemo.LevelSystem
             //There is no gravity
             World.Gravity = Vector2.Zero;
 
-            GlobalGameOptions.currentSong = _backgroundMusic;
             MediaPlayer.IsRepeating = true;
-            if (GlobalGameOptions.musicOn)
-                MediaPlayer.Play(_backgroundMusic);
+            MediaPlayer.Play(_backgroundMusic);
         }
 
         public override void UnloadContent()
@@ -148,7 +146,7 @@ namespace KevinsDemo.LevelSystem
             _pc.Update(gameTime);
             float blurProgress = _blur.Update(gameTime);
             if (MathHelper.Distance(blurProgress, 0.25f) < 0.05f)
-                _heartBeat.Play();
+                SoundEffectsManager.Play(_heartBeat);
             _fire.Update(gameTime, new Vector3(Camera.Position, 200f));
             base.Update(gameTime, otherScreenHasFocus, coveredByOtherScreen);
         }

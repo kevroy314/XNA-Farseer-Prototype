@@ -11,7 +11,7 @@ namespace KevinsDemo
     public class GameMain : Game
     {
         private GraphicsDeviceManager _graphics;
-
+        
         public GameMain()
         {
             Window.Title = "Kevin's Game Demo";
@@ -59,11 +59,9 @@ namespace KevinsDemo
 
             SimpleLevel samplelevel1 = new SimpleLevel(this);
 
-            MenuScreen optionsScreen = new MenuScreen("Options");
+            MenuScreen optionsScreen = GlobalGameOptions.OptionsMenu;
 
-            optionsScreen.AddMenuItem(GlobalGameOptions.getMusicStateString, EntryType.OptionsItem, GlobalGameOptions.toggleMusic, null);
-
-            MenuScreen menuScreen = new MenuScreen("");
+            MenuScreen menuScreen = new MenuScreen("", true);
 
             menuScreen.AddMenuItem("", EntryType.Separator, null);
             menuScreen.AddMenuItem("", EntryType.Separator, null);
@@ -77,7 +75,7 @@ namespace KevinsDemo
             menuScreen.AddMenuItem("", EntryType.Separator, null);
             menuScreen.AddMenuItem("", EntryType.Separator, null);
             menuScreen.AddMenuItem("", EntryType.Separator, null);
-            menuScreen.AddMenuItem("Exit", EntryType.ExitItem, null);
+            menuScreen.AddMenuItem("Exit", EntryType.GlobalExitItem, null);
             
             ScreenManager.AddScreen(new BackgroundScreen());
             ScreenManager.AddScreen(menuScreen);

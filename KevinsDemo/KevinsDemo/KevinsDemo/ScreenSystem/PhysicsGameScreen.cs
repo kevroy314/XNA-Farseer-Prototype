@@ -13,6 +13,7 @@ namespace KevinsDemo.ScreenSystem
         public Camera2D Camera;
         protected DebugViewXNA DebugView;
         protected World World;
+        protected PauseScreen PauseMenu;
 
         private float _agentForce;
         private float _agentTorque;
@@ -29,6 +30,7 @@ namespace KevinsDemo.ScreenSystem
             World = null;
             Camera = null;
             DebugView = null;
+            PauseMenu = null;
         }
 
         public bool EnableCameraControl { get; set; }
@@ -73,6 +75,11 @@ namespace KevinsDemo.ScreenSystem
             else
             {
                 Camera.ResetCamera();
+            }
+
+            if (PauseMenu == null)
+            {
+                PauseMenu = new PauseScreen(this);
             }
 
             // Loading may take a while... so prevent the game from "catching up" once we finished loading
@@ -145,7 +152,8 @@ namespace KevinsDemo.ScreenSystem
 
             if (input.IsNewButtonPress(Buttons.Back) || input.IsNewKeyPress(Keys.Escape))
             {
-                ExitScreen();
+                //ExitScreen();
+                ScreenManager.AddScreen(PauseMenu);
             }
 
             if (HasCursor)

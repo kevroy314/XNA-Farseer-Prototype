@@ -148,6 +148,7 @@
     <Compile Include="ScreenSystem\GameScreen.cs" />
     <Compile Include="ScreenSystem\IDemoScreen.cs" />
     <Compile Include="ScreenSystem\InputHelper.cs" />
+    <Compile Include="ScreenSystem\PauseScreen.cs" />
     <Compile Include="ScreenSystem\PhysicsGameScreen.cs" />
     <Compile Include="ScreenSystem\ScreenManagerComponent.cs" />
     <Compile Include="ScreenSystem\SpriteFonts.cs" />
@@ -159,6 +160,7 @@
     <Compile Include="ScreenSystem\MessageBoxScreen.cs" />
     <Compile Include="ScreenSystem\VirtualButton.cs" />
     <Compile Include="ScreenSystem\VirtualStick.cs" />
+    <Compile Include="SoundEffectsManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

@@ -9,7 +9,8 @@ namespace KevinsDemo.ScreenSystem
         Screen,
         Separator,
         OptionsItem,
-        ExitItem
+        ScreenExitItem,
+        GlobalExitItem
     }
 
     /// <summary>
@@ -24,7 +25,6 @@ namespace KevinsDemo.ScreenSystem
         private Vector2 _baseOrigin;
 
         private float _height;
-        private MenuScreen _menu;
 
         /// <summary>
         /// The position at which the entry is drawn. This is set by the MenuScreen
@@ -33,7 +33,9 @@ namespace KevinsDemo.ScreenSystem
         private Vector2 _position;
 
         private float _scale;
-        private GameScreen _screen;
+        private GameScreen _linkScreen;
+        private GameScreen _owningScreen;
+        private bool _closeParentScreen;
         public delegate object SettingsChangeDelegate(object param);
         private SettingsChangeDelegate _settingsChange;
         public delegate string SettingsChangeDisplayUpdate();
@@ -57,23 +59,35 @@ namespace KevinsDemo.ScreenSystem
         /// <summary>
         /// Constructs a new menu entry with the specified text.
         /// </summary>
-        public MenuEntry(MenuScreen menu, string text, EntryType type, GameScreen screen)
+        public MenuEntry(GameScreen owningScreen, string text, EntryType type, GameScreen linkScreen)
         {
             _text = text;
-            _screen = screen;
+            _owningScreen = owningScreen;
+            _linkScreen = linkScreen;
             _type = type;
-            _menu = menu;
             _scale = 0.9f;
             _alpha = 1.0f;
             _settingsChange = null;
         }
 
-        public MenuEntry(MenuScreen menu, SettingsChangeDisplayUpdate displayUpdateFunction, EntryType type, SettingsChangeDelegate settingsChange)
+        public MenuEntry(GameScreen owningScreen, string text, EntryType type, GameScreen linkScreen, bool closeParentScreen)
+        {
+            _text = text;
+            _owningScreen = owningScreen;
+            _closeParentScreen = closeParentScreen;
+            _linkScreen = linkScreen;
+            _type = type;
+            _scale = 0.9f;
+            _alpha = 1.0f;
+            _settingsChange = null;
+        }
+
+        public MenuEntry(GameScreen owningScreen, SettingsChangeDisplayUpdate displayUpdateFunction, EntryType type, SettingsChangeDelegate settingsChange)
         {
             _text = displayUpdateFunction();
-            _screen = null;
+            _owningScreen = owningScreen;
+            _linkScreen = null;
             _type = type;
-            _menu = menu;
             _scale = 0.9f;
             _alpha = 1.0f;
             _settingsChange = settingsChange;
@@ -104,9 +118,14 @@ namespace KevinsDemo.ScreenSystem
             set { _alpha = value; }
         }
 
-        public GameScreen Screen
+        public GameScreen OwningScreen
         {
-            get { return _screen; }
+            get { return _owningScreen; }
+        }
+
+        public GameScreen LinkScreen
+        {
+            get { return _linkScreen; }
         }
 
         public SettingsChangeDelegate SettingsChange
@@ -121,7 +140,7 @@ namespace KevinsDemo.ScreenSystem
 
         public void Initialize()
         {
-            SpriteFont font = _menu.ScreenManager.Fonts.MenuSpriteFont;
+            SpriteFont font = _owningScreen.ScreenManager.Fonts.MenuSpriteFont;
 
             _baseOrigin = new Vector2(font.MeasureString(Text).X, font.MeasureString("M").Y) * 0.5f;
 
@@ -129,9 +148,14 @@ namespace KevinsDemo.ScreenSystem
             _height = font.MeasureString("M").Y * 0.8f;
         }
 
-        public bool IsExitItem()
+        public bool IsGlobalExitItem()
         {
-            return _type == EntryType.ExitItem;
+            return _type == EntryType.GlobalExitItem;
+        }
+
+        public bool IsScreenExitItem()
+        {
+            return _type == EntryType.ScreenExitItem;
         }
 
         public bool IsSelectable()
@@ -142,6 +166,12 @@ namespace KevinsDemo.ScreenSystem
         public bool IsOptionsItem()
         {
             return _type != EntryType.OptionsItem;
+        }
+
+        public bool CloseParentScreen
+        {
+            get { return _closeParentScreen; }
+            set { _closeParentScreen = value; }
         }
 
         public void ModifyOption(object param)
@@ -183,8 +213,8 @@ namespace KevinsDemo.ScreenSystem
         /// </summary>
         public void Draw()
         {
-            SpriteFont font = _menu.ScreenManager.Fonts.MenuSpriteFont;
-            SpriteBatch batch = _menu.ScreenManager.SpriteBatch;
+            SpriteFont font = _owningScreen.ScreenManager.Fonts.MenuSpriteFont;
+            SpriteBatch batch = _owningScreen.ScreenManager.SpriteBatch;
 
             Color color;
             if (_type == EntryType.Separator)

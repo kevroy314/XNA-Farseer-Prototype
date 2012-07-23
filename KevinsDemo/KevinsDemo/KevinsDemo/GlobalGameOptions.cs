@@ -3,43 +3,72 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Media;
+using KevinsDemo.ScreenSystem;
 
 namespace KevinsDemo
 {
     class GlobalGameOptions
     {
-        public static bool musicOn = true;
-        public static bool soundEffectsOn = true;
-        public static bool fullScreen = false;
-        public static Song currentSong = null;
+        public static bool SoundEffectsOn = true;
+        public static bool FullScreen = false;
 
-        public static object toggleMusic(object param)
+        private static MenuScreen _optionsMenu = GenerateOptionsMenu();
+
+        private static MenuScreen GenerateOptionsMenu()
+        {
+            MenuScreen optionsScreen = new MenuScreen("Options", false);
+
+            optionsScreen.AddMenuItem(GetMusicStateString, EntryType.OptionsItem, ToggleMusic, null);
+            optionsScreen.AddMenuItem(GetSoundEffectsStateString, EntryType.OptionsItem, ToggleSoundEffects, null);
+
+            return optionsScreen;
+        }
+
+        public static MenuScreen OptionsMenu
+        {
+            get { return _optionsMenu; }
+        }
+
+        private static object ToggleMusic(object param)
         {
             if (param != null)
             {
                 if (param.GetType() == Type.GetType("bool"))
                 {
-                    musicOn = (bool)param;
-                    return musicOn;
+                    MediaPlayer.IsMuted = (bool)param;
+                    return MediaPlayer.IsMuted;
                 }
             }
 
-            musicOn = !musicOn;
+            MediaPlayer.IsMuted = !MediaPlayer.IsMuted;
 
-            if (musicOn)
-            {
-                if (currentSong != null)
-                    MediaPlayer.Play(currentSong);
-            }
-            else
-                MediaPlayer.Stop();
-
-            return musicOn;
+            return MediaPlayer.IsMuted;
         }
 
-        public static string getMusicStateString()
+        private static string GetMusicStateString()
         {
-            return "Music: " + musicOn;
+            return "Music: " + (MediaPlayer.IsMuted ? "Off" : "On");
+        }
+
+        private static object ToggleSoundEffects(object param)
+        {
+            if (param != null)
+            {
+                if (param.GetType() == Type.GetType("bool"))
+                {
+                    SoundEffectsManager.IsMuted = (bool)param;
+                    return SoundEffectsManager.IsMuted;
+                }
+            }
+
+            SoundEffectsManager.IsMuted = !SoundEffectsManager.IsMuted;
+
+            return SoundEffectsManager.IsMuted;
+        }
+
+        private static string GetSoundEffectsStateString()
+        {
+            return "Sound Effects: " + (SoundEffectsManager.IsMuted ? "Off" : "On");
         }
     }
 }
