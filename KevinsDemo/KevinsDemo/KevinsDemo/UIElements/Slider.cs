@@ -56,10 +56,10 @@ namespace KevinsDemo.UIElements
             }
 
             _bounds = new Rectangle((int)position.X, (int)position.Y, (int)sizeInPx.X, (int)sizeInPx.Y);
-            _zeroZoneBounds = new Rectangle((int)position.X, (int)position.Y, (int)_zeroZoneMax.X, (int)_zeroZoneMax.Y);
-            _zeroZoneBounds = new Rectangle((int)_zeroZoneMax.X, (int)_zeroZoneMax.Y, (int)_maxZoneMin.X, (int)_maxZoneMin.Y);
-            _maxZoneBounds = new Rectangle((int)_maxZoneMin.X, (int)_maxZoneMin.Y, (int)sizeInPx.X, (int)sizeInPx.Y);
-            _markerZoneBounds = new Rectangle((int)(_normalZoneBounds.Width * _value + position.X), (int)position.Y, _sliderMarker.Width, _sliderMarker.Height);
+            _zeroZoneBounds = new Rectangle((int)position.X, (int)position.Y, (int)(sizeInPx.X * 0.1f), (int)sizeInPx.Y);
+            _normalZoneBounds = new Rectangle((int)(position.X + sizeInPx.X * 0.1f), (int)position.Y, (int)(sizeInPx.X * 0.8f), (int)sizeInPx.Y);
+            _maxZoneBounds = new Rectangle((int)(position.X + sizeInPx.X * 0.9f), (int)position.Y, (int)(sizeInPx.X * 0.1f), (int)sizeInPx.Y);
+            _markerZoneBounds = new Rectangle((int)(_normalZoneBounds.Width * _value + position.X), (int)position.Y, _sliderMarker.Width, (int)sizeInPx.Y);
         }
 
         public enum SliderType
@@ -77,21 +77,19 @@ namespace KevinsDemo.UIElements
                 if (_zeroZoneBounds.Contains(x, y))
                 {
                     _value = 0.0f;
-                    _markerZoneBounds = new Rectangle((int)(mousePosition.X + _sliderMarker.Width / 2), (int)_position.Y, _sliderMarker.Width, _sliderMarker.Height);
-                    return true;
+                    _markerZoneBounds = new Rectangle((int)(_normalZoneBounds.X-_sliderMarker.Width), (int)_position.Y, _sliderMarker.Width, (int)_sizeInPx.Y);
                 }
                 else if (_maxZoneBounds.Contains(x, y))
                 {
                     _value = 1.0f;
-                    _markerZoneBounds = new Rectangle((int)(mousePosition.X + _sliderMarker.Width / 2), (int)_position.Y, _sliderMarker.Width, _sliderMarker.Height);
-                    return true;
+                    _markerZoneBounds = new Rectangle((int)_maxZoneBounds.X, (int)_position.Y, _sliderMarker.Width, (int)_sizeInPx.Y);
                 }
                 else if (_normalZoneBounds.Contains(x, y))
                 {
                     _value = (x - _zeroZoneBounds.X) / _normalZoneBounds.Width;
-                    _markerZoneBounds = new Rectangle((int)(mousePosition.X + _sliderMarker.Width / 2), (int)_position.Y, _sliderMarker.Width, _sliderMarker.Height);
-                    return true;
+                    _markerZoneBounds = new Rectangle((int)(mousePosition.X - _sliderMarker.Width / 2), (int)_position.Y, _sliderMarker.Width, (int)_sizeInPx.Y);
                 }
+                return true;
             }
             return false;
         }
@@ -99,10 +97,10 @@ namespace KevinsDemo.UIElements
         public void Draw()
         {
             _screenManager.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone);
-            _screenManager.SpriteBatch.Draw(_sliderEnd, _zeroZoneBounds, null, _color, 0f, Vector2.Zero, SpriteEffects.None, 0f);
+            _screenManager.SpriteBatch.Draw(_sliderEnd, _zeroZoneBounds, null, Color.Blue, 0f, Vector2.Zero, SpriteEffects.None, 0f);
             _screenManager.SpriteBatch.Draw(_sliderMiddle, _normalZoneBounds, null, _color, 0f, Vector2.Zero, SpriteEffects.None, 0f);
-            _screenManager.SpriteBatch.Draw(_sliderEnd, _maxZoneBounds, null, _color, 0f, Vector2.Zero, SpriteEffects.FlipHorizontally, 0f);
-            _screenManager.SpriteBatch.Draw(_sliderMarker, _markerZoneBounds, null, _color, 0f, Vector2.Zero, SpriteEffects.None, 0f);
+            _screenManager.SpriteBatch.Draw(_sliderEnd, _maxZoneBounds, null, Color.Blue, 0f, Vector2.Zero, SpriteEffects.FlipHorizontally, 0f);
+            _screenManager.SpriteBatch.Draw(_sliderMarker, _markerZoneBounds, null, Color.Green, 0f, Vector2.Zero, SpriteEffects.None, 0f);
             _screenManager.SpriteBatch.End();
         }
 

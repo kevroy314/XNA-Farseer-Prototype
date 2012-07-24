@@ -77,7 +77,7 @@ namespace KevinsDemo.LevelSystem
             _RT = new RenderTarget2D(ScreenManager.GraphicsDevice, ScreenManager.GraphicsDevice.Viewport.Bounds.Width, ScreenManager.GraphicsDevice.Viewport.Bounds.Height, false, ScreenManager.GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.None);
             _blurredRT = new RenderTarget2D(ScreenManager.GraphicsDevice, ScreenManager.GraphicsDevice.Viewport.Bounds.Width, ScreenManager.GraphicsDevice.Viewport.Bounds.Height, false, ScreenManager.GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.None);
 
-            _backgroundMusic = ScreenManager.Content.Load<Song>("Music/bgMusic");
+            _backgroundMusic = ScreenManager.Content.Load<Song>("Music/caketown");
 
             _heartBeat = ScreenManager.Content.Load<SoundEffect>("SoundEffects/doublebeat");
 
