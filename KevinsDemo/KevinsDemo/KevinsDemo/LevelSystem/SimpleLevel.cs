@@ -41,6 +41,7 @@ namespace KevinsDemo.LevelSystem
 
         //The campfire
         private Campfire _fire;
+        private SphereParticleSystem _spriteParticles;
 
         private Game _parentGame;
 
@@ -91,13 +92,18 @@ namespace KevinsDemo.LevelSystem
                 float r = 13f;
                 float xpos = cos * r;
                 float ypos = sin * r;
-                _buildings[i] = new Building(World, ScreenManager.Content, new Vector2(xpos, ypos), 0, false, "EnvironmentObjects/Tents/" + buildingTypes[i]);
+                _buildings[i] = new Building(World, ScreenManager.Content, new Vector2(xpos, ypos), 0, false, "EnvironmentObjects/Tents/" + buildingTypes[i], "EnvironmentObjects/Tents/" + buildingTypes[i]+"_collisions");
             }
 
             _fire = new Campfire(_parentGame, World, ScreenManager.SpriteBatch, Vector2.Zero);
-
+            
             //Create the character
             _pc = new Character(World, ScreenManager.Content);
+            _spriteParticles = new SphereParticleSystem(_parentGame);
+            _spriteParticles.AutoInitialize(_parentGame.GraphicsDevice, _parentGame.Content, ScreenManager.SpriteBatch);
+            
+            //_spriteParticles.AttractorMode = SpriteParticleSystem.EAttractorModes.Attract;
+            //_spriteParticles.AttractorPosition = new Vector3(_pc.Body.Position, 0f);
 
             //Create the blur effect (make it slow so it's not distracting)
             _blur = new VariableBlurEffect(ScreenManager.Content, ScreenManager.GraphicsDevice, ScreenManager.GraphicsDevice.Viewport.Bounds, 30, 300, 6);
@@ -118,6 +124,7 @@ namespace KevinsDemo.LevelSystem
         {
             _blur.UnloadContent();
             _fire.UnloadContent();
+            _spriteParticles.Destroy();
             base.UnloadContent();
         }
 
@@ -128,16 +135,20 @@ namespace KevinsDemo.LevelSystem
             ScreenManager.SpriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, Camera.View);
             for(int i = 0; i < _buildings.Length;i++)
                 _buildings[i].Draw(ScreenManager.SpriteBatch);
-            _fire.Draw(ScreenManager.SpriteBatch, new Vector3(-Camera.Position, 200f));
+            _fire.Draw(ScreenManager.SpriteBatch);
             _pc.Draw(ScreenManager.SpriteBatch);
             ScreenManager.SpriteBatch.End();
             _fire.DrawParticles();
+            Matrix sViewMatrix = Matrix.CreateLookAt(new Vector3(0, 50, -200), new Vector3(0f, 0, 0), Vector3.Up);
+            Matrix sProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, (float)_parentGame.GraphicsDevice.Viewport.Width / (float)_parentGame.GraphicsDevice.Viewport.Height, 1, 10000);
+            _spriteParticles.SetWorldViewProjectionMatrices(Matrix.Identity, sViewMatrix, sProjectionMatrix);
             _blurredRT = _blur.RenderFrame(ScreenManager.GraphicsDevice,ScreenManager.SpriteBatch,_RT,gameTime);
             //Set the render target to the screen and draw the blurred frame
             ScreenManager.GraphicsDevice.SetRenderTarget(null);
             ScreenManager.SpriteBatch.Begin();
             ScreenManager.SpriteBatch.Draw(_blurredRT, ScreenManager.GraphicsDevice.Viewport.Bounds, Color.White);
             ScreenManager.SpriteBatch.End();
+            _spriteParticles.Draw();
             base.Draw(gameTime);
         }
 
@@ -147,7 +158,11 @@ namespace KevinsDemo.LevelSystem
             float blurProgress = _blur.Update(gameTime);
             if (MathHelper.Distance(blurProgress, 0.25f) < 0.05f)
                 SoundEffectsManager.Play(_heartBeat);
-            _fire.Update(gameTime, new Vector3(Camera.Position, 200f));
+            _fire.Update(gameTime, Camera);
+            _spriteParticles.Emitter.PositionData.Position = new Vector3(Camera.ConvertWorldToScreen(_pc.Body.Position), 0f);
+            //_spriteParticles.AttractorPosition = new Vector3(Camera.ConvertWorldToScreen(_pc.Body.Position), 0f);
+            _spriteParticles.CameraPosition = new Vector3(0, 50, -200);
+            _spriteParticles.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
             base.Update(gameTime, otherScreenHasFocus, coveredByOtherScreen);
         }
 

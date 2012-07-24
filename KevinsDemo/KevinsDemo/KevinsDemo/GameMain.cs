@@ -87,7 +87,7 @@ namespace KevinsDemo
         {
             base.Draw(gameTime);
         }
-
+        
         protected override void Update(GameTime gameTime)
         {
             base.Update(gameTime);

@@ -272,8 +272,8 @@ namespace DPSF.ParticleSystems
                 ParticleEvents.AddEveryTimeEvent(UpdateParticlePositionAndVelocityUsingAcceleration);
                 ParticleEvents.AddEveryTimeEvent(UpdateParticleRotationUsingRotationalVelocity);
                 ParticleEvents.AddEveryTimeEvent(UpdateParticleTransparencyWithQuickFadeInAndSlowFadeOut, 100);
-                ParticleEvents.AddEveryTimeEvent(UpdateParticleToFaceTheCamera, 200);
                 ParticleEvents.AddEveryTimeEvent(UpdateParticleWidthAndHeightUsingLerp);
+                ParticleEvents.AddEveryTimeEvent(UpdateParticleToFaceTheCamera, 200);
             }
 
             // Used to generate smoke coming off the ring of fire

@@ -86,31 +86,23 @@ namespace ParticleObjects
             _particleSystem.Destroy();
         }
 
-        public void Update(GameTime gameTime, Vector3 cameraPos)
+        public void Update(GameTime gameTime, Camera2D camera)
         {
-            // Update the Particle System
-            //Vector3 pos = -cameraPos;
-            //pos.Y *= -0.5f;
-            //pos.X *= 0.5f;
-            //_particleSystem.Emitter.PositionData.Position = pos;
-            _particleSystem.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
-        }
-
-        public void Draw(SpriteBatch batch, Vector3 cameraPos)
-        {
-            Vector3 pos = -cameraPos;
-            pos.Y *= 0.5f;
-            pos.X *= -0.5f;
-            _particleSystem.Emitter.PositionData.Position = pos;
             // Set up the Camera's View matrix
-            Matrix sViewMatrix = Matrix.CreateLookAt(new Vector3(0f, 0f, 200f), Vector3.Zero, Vector3.Up);
+            Matrix sViewMatrix = Matrix.CreateLookAt(new Vector3(camera.Position.X / 4, -camera.Position.Y / 4, 200f), new Vector3(camera.Position.X / 4, -camera.Position.Y / 4, 0f), Vector3.Up);
 
             // Setup the Camera's Projection matrix by specifying the field of view (1/4 pi), aspect ratio, and the near and far clipping planes
             Matrix sProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, (float)_parentGame.GraphicsDevice.Viewport.Width / (float)_parentGame.GraphicsDevice.Viewport.Height, 1, 10000);
 
+            //sProjectionMatrix = camera.SimProjection;
+
             // Draw the Particle System
             _particleSystem.SetWorldViewProjectionMatrices(Matrix.Identity, sViewMatrix, sProjectionMatrix);
+            _particleSystem.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+        }
 
+        public void Draw(SpriteBatch batch)
+        {
             batch.Draw(_logs, _body.Position, null, Color.White, 0f, _origin, _scale, SpriteEffects.None, 0);
         }
 

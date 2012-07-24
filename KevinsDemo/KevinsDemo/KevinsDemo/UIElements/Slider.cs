@@ -5,10 +5,17 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using KevinsDemo.ScreenSystem;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace KevinsDemo.UIElements
 {
-    class Slider
+    public enum SliderType
+    {
+        HorizontalSlider,
+        VerticalSlider
+    }
+
+    public class Slider
     {
         private ScreenManager _screenManager;
 
@@ -30,6 +37,8 @@ namespace KevinsDemo.UIElements
         private Texture2D _sliderMiddle;
         private Texture2D _sliderEnd;
         private Texture2D _sliderMarker;
+
+        private MouseState? clickState;
 
         public Slider(ScreenManager screenManager, Vector2 position, Vector2 sizeInPx, float value, Color color, SliderType type)
         {
@@ -62,16 +71,18 @@ namespace KevinsDemo.UIElements
             _markerZoneBounds = new Rectangle((int)(_normalZoneBounds.Width * _value + position.X), (int)position.Y, _sliderMarker.Width, (int)sizeInPx.Y);
         }
 
-        public enum SliderType
+        public bool Update(MouseState state)
         {
-            HorizontalSlider,
-            VerticalSlider
-        }
+            if (!clickState.HasValue && state.LeftButton == ButtonState.Pressed)
+                clickState = state;
+            if (state.LeftButton == ButtonState.Released)
+            {
+                clickState = null;
+                return false;
+            }
 
-        public bool Update(Vector2 mousePosition)
-        {
-            int x = (int)mousePosition.X;
-            int y = (int)mousePosition.Y;
+            int x = (int)state.X;
+            int y = (int)clickState.Value.Y;
             if (_bounds.Contains(x,y))
             {
                 if (_zeroZoneBounds.Contains(x, y))
@@ -87,7 +98,7 @@ namespace KevinsDemo.UIElements
                 else if (_normalZoneBounds.Contains(x, y))
                 {
                     _value = (x - _zeroZoneBounds.X) / _normalZoneBounds.Width;
-                    _markerZoneBounds = new Rectangle((int)(mousePosition.X - _sliderMarker.Width / 2), (int)_position.Y, _sliderMarker.Width, (int)_sizeInPx.Y);
+                    _markerZoneBounds = new Rectangle((int)(x - _sliderMarker.Width / 2), (int)_position.Y, _sliderMarker.Width, (int)_sizeInPx.Y);
                 }
                 return true;
             }

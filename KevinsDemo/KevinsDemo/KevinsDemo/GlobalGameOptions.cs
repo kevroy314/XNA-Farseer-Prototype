@@ -20,6 +20,7 @@ namespace KevinsDemo
 
             optionsScreen.AddMenuItem(GetMusicStateString, EntryType.OptionsItem, ToggleMusic, null);
             optionsScreen.AddMenuItem(GetSoundEffectsStateString, EntryType.OptionsItem, ToggleSoundEffects, null);
+            optionsScreen.AddMenuItem("Go Back", EntryType.ScreenExitItem, null);
 
             return optionsScreen;
         }

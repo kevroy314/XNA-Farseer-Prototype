@@ -147,7 +147,9 @@ namespace DPSF.ParticleSystems
 			// This function must be executed after the Color Lerp function as the Color Lerp will overwrite the Color's
 			// Transparency value, so we give this function an Execution Order of 100 to make sure it is executed last.
 			ParticleEvents.AddEveryTimeEvent(UpdateParticleTransparencyToFadeOutUsingLerp, 100);
-			ParticleEvents.AddEveryTimeEvent(UpdateParticleToFaceTheCamera, 200);
+			
+			// Update the particle to face the camera. Do this after updating it's rotation/orientation.
+            ParticleEvents.AddEveryTimeEvent(UpdateParticleToFaceTheCamera, 200);
 
 			// Set the Particle System's Emitter to toggle on and off every 0.5 seconds
 			ParticleSystemEvents.LifetimeData.EndOfLifeOption = CParticleSystemEvents.EParticleSystemEndOfLifeOptions.Repeat;

@@ -19,15 +19,24 @@ namespace KevinsDemo.EnvironmentSystem
         private Body _compound;
         private Vector2 _origin;
         private Texture2D _polygonTexture;
+        private Texture2D _drawTexture;
         private float _scale;
         private bool flipHorizontal;
 
-        public Building(World world, ContentManager content, Vector2 position, float rotation, bool flippedHorizontally, string contentItem)
+        public Building(World world, ContentManager content, Vector2 position, float rotation, bool flippedHorizontally, string drawTextureContentItem, string collisionTextureContentItem)
         {
             flipHorizontal = flippedHorizontally;
 
             //load texture that will represent the physics body
-            _polygonTexture = content.Load<Texture2D>(contentItem);
+            try
+            {
+                _polygonTexture = content.Load<Texture2D>(collisionTextureContentItem);
+            }
+            catch (Exception) 
+            {
+                _polygonTexture = content.Load<Texture2D>(drawTextureContentItem); 
+            }
+            _drawTexture = content.Load<Texture2D>(drawTextureContentItem);
 
             //Create an array to hold the data from the texture
             uint[] data = new uint[_polygonTexture.Width * _polygonTexture.Height];
@@ -75,7 +84,7 @@ namespace KevinsDemo.EnvironmentSystem
 
         public void Draw(SpriteBatch batch)
         {
-            batch.Draw(_polygonTexture, ConvertUnits.ToDisplayUnits(_compound.Position),
+            batch.Draw(_drawTexture, ConvertUnits.ToDisplayUnits(_compound.Position),
                 null, Color.White, _compound.Rotation, _origin, _scale, flipHorizontal ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                                            0f);
         }
