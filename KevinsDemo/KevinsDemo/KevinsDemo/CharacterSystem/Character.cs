@@ -128,22 +128,22 @@ namespace KevinsDemo.CharacterSystem
             bool down = false;
             bool left = false;
             bool right = false;
-            if (input.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.W))
+            if (input.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.W)||input.GamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickUp))
             {
                 up = true;
                 _agentBody.ApplyLinearImpulse(new Vector2(0.0f, -_speed));
             }
-            if (input.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.S))
+            if (input.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.S) || input.GamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickDown))
             {
                 down = true;
                 _agentBody.ApplyLinearImpulse(new Vector2(0.0f, _speed));
             }
-            if (input.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.A))
+            if (input.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.A) || input.GamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickLeft))
             {
                 left = true;
                 _agentBody.ApplyLinearImpulse(new Vector2(-_speed, 0.0f));
             }
-            if (input.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.D))
+            if (input.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.D) || input.GamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickRight))
             {
                 right = true;
                 _agentBody.ApplyLinearImpulse(new Vector2(_speed, 0.0f));
