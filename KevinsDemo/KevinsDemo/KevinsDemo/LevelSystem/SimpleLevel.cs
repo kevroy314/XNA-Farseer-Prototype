@@ -41,7 +41,7 @@ namespace KevinsDemo.LevelSystem
 
         //The campfire
         private Campfire _fire;
-        private SphereParticleSystem _spriteParticles;
+        private SpriteParticleSystem _spriteParticles;
 
         private Game _parentGame;
 
@@ -98,10 +98,9 @@ namespace KevinsDemo.LevelSystem
             _fire = new Campfire(_parentGame, World, ScreenManager.SpriteBatch, Vector2.Zero);
             
             //Create the character
-            _pc = new Character(World, ScreenManager.Content);
-            _spriteParticles = new SphereParticleSystem(_parentGame);
+            _pc = new Character(World, ScreenManager.Content,Camera.ConvertScreenToWorld(new Vector2(ScreenManager.GraphicsDevice.Viewport.Bounds.Center.X,ScreenManager.GraphicsDevice.Viewport.Bounds.Center.Y + 50f)));
+            _spriteParticles = new SpriteParticleSystem(_parentGame, new Vector3(ScreenManager.GraphicsDevice.Viewport.Bounds.Center.X, ScreenManager.GraphicsDevice.Viewport.Bounds.Center.Y+50, 0f),_pc.Bounds);
             _spriteParticles.AutoInitialize(_parentGame.GraphicsDevice, _parentGame.Content, ScreenManager.SpriteBatch);
-            
             //_spriteParticles.AttractorMode = SpriteParticleSystem.EAttractorModes.Attract;
             //_spriteParticles.AttractorPosition = new Vector3(_pc.Body.Position, 0f);
 
@@ -131,24 +130,31 @@ namespace KevinsDemo.LevelSystem
         public override void Draw(GameTime gameTime)
         {
             ScreenManager.GraphicsDevice.SetRenderTarget(_RT);
+
             ScreenManager.GraphicsDevice.Clear(Color.Black);
+
             ScreenManager.SpriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, Camera.View);
             for(int i = 0; i < _buildings.Length;i++)
                 _buildings[i].Draw(ScreenManager.SpriteBatch);
             _fire.Draw(ScreenManager.SpriteBatch);
+            ScreenManager.SpriteBatch.End();
+
+            _spriteParticles.Draw();
+
+            ScreenManager.SpriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, Camera.View);
             _pc.Draw(ScreenManager.SpriteBatch);
             ScreenManager.SpriteBatch.End();
+
             _fire.DrawParticles();
-            Matrix sViewMatrix = Matrix.CreateLookAt(new Vector3(0, 50, -200), new Vector3(0f, 0, 0), Vector3.Up);
-            Matrix sProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, (float)_parentGame.GraphicsDevice.Viewport.Width / (float)_parentGame.GraphicsDevice.Viewport.Height, 1, 10000);
-            _spriteParticles.SetWorldViewProjectionMatrices(Matrix.Identity, sViewMatrix, sProjectionMatrix);
+
             _blurredRT = _blur.RenderFrame(ScreenManager.GraphicsDevice,ScreenManager.SpriteBatch,_RT,gameTime);
+
             //Set the render target to the screen and draw the blurred frame
             ScreenManager.GraphicsDevice.SetRenderTarget(null);
             ScreenManager.SpriteBatch.Begin();
             ScreenManager.SpriteBatch.Draw(_blurredRT, ScreenManager.GraphicsDevice.Viewport.Bounds, Color.White);
             ScreenManager.SpriteBatch.End();
-            _spriteParticles.Draw();
+
             base.Draw(gameTime);
         }
 
@@ -159,9 +165,8 @@ namespace KevinsDemo.LevelSystem
             if (MathHelper.Distance(blurProgress, 0.25f) < 0.05f)
                 SoundEffectsManager.Play(_heartBeat);
             _fire.Update(gameTime, Camera);
-            _spriteParticles.Emitter.PositionData.Position = new Vector3(Camera.ConvertWorldToScreen(_pc.Body.Position), 0f);
-            //_spriteParticles.AttractorPosition = new Vector3(Camera.ConvertWorldToScreen(_pc.Body.Position), 0f);
-            _spriteParticles.CameraPosition = new Vector3(0, 50, -200);
+            Vector2 screenPos = Camera.ConvertWorldToScreen(_pc.Body.Position);
+            _spriteParticles.AttractorPosition = new Vector3(screenPos.X, screenPos.Y, 0f);
             _spriteParticles.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
             base.Update(gameTime, otherScreenHasFocus, coveredByOtherScreen);
         }

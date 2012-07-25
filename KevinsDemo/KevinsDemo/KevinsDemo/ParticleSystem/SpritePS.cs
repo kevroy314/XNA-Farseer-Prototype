@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using KevinsDemo;
 #endregion
 
 namespace DPSF.ParticleSystems
@@ -44,14 +45,22 @@ namespace DPSF.ParticleSystems
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public SpriteParticleSystem(Game cGame) : base(cGame) { }
+        public SpriteParticleSystem(Game cGame, Vector3 attractorPosition, Rectangle initialBounds) : base(cGame) 
+        {
+            msAttractorPosition = attractorPosition;
+            miScreenWidth = (int)initialBounds.Width;
+            miScreenHeight = (int)initialBounds.Height;
+            miScreenOffsetX = (int)(initialBounds.Center.X + attractorPosition.X) - miScreenWidth / 2;
+            miScreenOffsetY = (int)(initialBounds.Center.Y + attractorPosition.Y) - miScreenHeight / 2;
+        }
 
 		//===========================================================
 		// Structures and Variables
 		//===========================================================
-		int miScreenWidth = 0;
-		int miScreenHeight = 0;
-
+		int miScreenWidth;
+		int miScreenHeight;
+        int miScreenOffsetX;
+        int miScreenOffsetY;
 		int miRows = 0;
 		int miColumns = 0;
 
@@ -108,9 +117,6 @@ namespace DPSF.ParticleSystems
 
 			Emitter.ParticlesPerSecond = 200;
 
-			miScreenWidth = GraphicsDevice.Viewport.Width;
-			miScreenHeight = GraphicsDevice.Viewport.Height;
-
 			LoadAttractionEvents();
 		}
 
@@ -140,8 +146,8 @@ namespace DPSF.ParticleSystems
 			InitialProperties.LifetimeMax = 3.0f;
 			InitialProperties.PositionMin = Vector3.Zero;
 			InitialProperties.PositionMax = Vector3.Zero;
-			InitialProperties.VelocityMin = new Vector3(-50, -50, -50);
-			InitialProperties.VelocityMax = new Vector3(50, 50, 50);
+			InitialProperties.VelocityMin = new Vector3(-25, -25, -25);
+			InitialProperties.VelocityMax = new Vector3(25, 25, 25);
 			InitialProperties.AccelerationMin = Vector3.Zero;
 			InitialProperties.AccelerationMax = Vector3.Zero;
 			InitialProperties.StartColorMin = Color.Red;
@@ -178,13 +184,13 @@ namespace DPSF.ParticleSystems
 			ParticleInitializationFunction = InitializeParticleAttraction;
 
 			ParticleEvents.RemoveAllEvents();
-			ParticleEvents.AddEveryTimeEvent(UpdateParticleVelocityUsingExternalForce, 100);
+			//ParticleEvents.AddEveryTimeEvent(UpdateParticleVelocityUsingExternalForce, 100);
 			ParticleEvents.AddEveryTimeEvent(UpdateParticleVelocityUsingFriction, 200);
 			ParticleEvents.AddEveryTimeEvent(UpdateParticlePositionAndVelocityUsingAcceleration, 500);
-			ParticleEvents.AddEveryTimeEvent(UpdateParticleKeepParticleOnScreen, 1000);
+			//ParticleEvents.AddEveryTimeEvent(UpdateParticleKeepParticleOnScreen, 1000);
 
-			AttractorMode = EAttractorModes.Attract;
-			mfAttractorAffectDistance = 200;
+			AttractorMode = EAttractorModes.AttractFriction;
+			mfAttractorAffectDistance = 400;
 		}
 
 		public void InitializeParticleAttraction(DPSFParticle Particle)
@@ -193,8 +199,16 @@ namespace DPSF.ParticleSystems
 
 			cParticle.Lifetime = 0;
 			cParticle.Width = cParticle.Height = 40;
-			cParticle.Position = new Vector3(RandomNumber.Next(0, miScreenWidth), RandomNumber.Next(0, miScreenHeight), 0);
-			cParticle.Color = DPSFHelper.RandomColor();
+            float x = (float)Math.Sqrt(RandomNumber.NextFloat()) * (float)Math.Cos(RandomNumber.NextFloat() * (MathHelper.TwoPi));
+            x *= (miScreenWidth / 2f);
+            x += miScreenOffsetX;
+            float y = (float)Math.Sqrt(RandomNumber.NextFloat()) * (float)Math.Cos(RandomNumber.NextFloat() * (MathHelper.TwoPi));
+            y *= (miScreenHeight / 2f);
+            y += miScreenOffsetY;
+            cParticle.Position = new Vector3(x, y, 0);
+            float color = RandomNumber.Between(0.05f, 0.24f);
+            Color c = KevinsHelperFunctions.HSL2RGB(color, RandomNumber.NextFloat(), RandomNumber.NextFloat()/5f+0.3f);
+			cParticle.Color = c;
 			cParticle.ExternalForce = new Vector3(0, mfGravity, 0);
 			cParticle.Friction = mfGravity;
 
@@ -202,13 +216,12 @@ namespace DPSF.ParticleSystems
 			if (NumberOfActiveParticles == 0)
 			{
 				// Make the Attractor Particle larger than the rest
-				cParticle.Width = cParticle.Height = 100;
+				cParticle.Width = cParticle.Height = 300;
 
-				// Place the Attractor in the middle of the screen
-				cParticle.Position = new Vector3(miScreenWidth / 2, miScreenHeight / 2, 0);
+                cParticle.Position = msAttractorPosition;
 
 				// Make the Attractor White
-				cParticle.Color = Color.White;
+				cParticle.Color = new Color(0,0,0,0);
 			}
 		}
 

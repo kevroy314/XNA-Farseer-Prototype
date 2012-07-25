@@ -121,6 +121,7 @@
   <ItemGroup>
     <Compile Include="FullScreenEffects\VariableBlurEffect.cs" />
     <Compile Include="GlobalGameOptions.cs" />
+    <Compile Include="KevinsHelperFunctions.cs" />
     <Compile Include="ParticleObjects\Campfire.cs" />
     <Compile Include="ParticleSystem\Templates\DefaultQuadParticleSystemTemplate.cs" />
     <Compile Include="ParticleSystem\Templates\DefaultSprite3DBillboardParticleSystemTemplate.cs" />
@@ -128,7 +129,6 @@
     <Compile Include="ParticleSystem\Templates\DefaultTexturedQuadParticleSystemTemplate.cs" />
     <Compile Include="EnvironmentSystem\Building.cs" />
     <Compile Include="CharacterSystem\Character.cs" />
-    <Compile Include="CharacterSystem\CharacterInputHandler.cs" />
     <Compile Include="DrawingSystem\LineBatch.cs" />
     <Compile Include="ParticleSystem\FirePS.cs" />
     <Compile Include="LevelSystem\SimpleLevel.cs" />

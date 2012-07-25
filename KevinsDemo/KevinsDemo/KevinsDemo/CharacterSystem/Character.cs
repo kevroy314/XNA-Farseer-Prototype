@@ -18,6 +18,9 @@ namespace KevinsDemo.CharacterSystem
     {
         //The body for collision calculations
         private Body _agentBody;
+
+        private Rectangle _bounds;
+
         //The texture for drawing
         private Texture2D _agentTextures;
         //The texture for determining the collision polygon
@@ -40,12 +43,12 @@ namespace KevinsDemo.CharacterSystem
         private int _spriteTransitionDelay;
         private float _spriteTransitionCounter;
 
-        public Character(World world, ContentManager content)
+        public Character(World world, ContentManager content, Vector2 position)
         {
             //Load agent and collision textures
             _agentTextures = content.Load<Texture2D>("CharacterSprites/chrono");
             _agentCollisionTextures = content.Load<Texture2D>("CharacterSprites/chrono_collisionBox_Small");
-
+            _bounds = _agentTextures.Bounds;
             //Create an array to hold the data from the texture
             uint[] data = new uint[_agentCollisionTextures.Width * _agentCollisionTextures.Height];
 
@@ -92,7 +95,7 @@ namespace KevinsDemo.CharacterSystem
             //Apply some friction
             _agentBody.LinearDamping = 10f;
             //Offset the initial position from center
-            _agentBody.Position += new Vector2(10f, 10f);
+            _agentBody.Position = position;
 
             //Speed of the player movement
             _speed = 0.6f;
@@ -186,6 +189,11 @@ namespace KevinsDemo.CharacterSystem
         public Body Body
         {
             get { return _agentBody; }
+        }
+
+        public Rectangle Bounds
+        {
+            get { return _bounds; }
         }
     }
 }
