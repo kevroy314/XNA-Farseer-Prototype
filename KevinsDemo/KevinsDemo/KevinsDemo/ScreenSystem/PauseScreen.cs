@@ -185,7 +185,7 @@ namespace KevinsDemo.ScreenSystem
                     if (_menuEntries[_selectedEntry].LinkScreen is IDemoScreen)
                     {
                         ScreenManager.AddScreen(
-                            new MessageBoxScreen((_menuEntries[_selectedEntry].LinkScreen as IDemoScreen).GetDetails()));
+                            new MessageBoxScreen((_menuEntries[_selectedEntry].LinkScreen as IDemoScreen).GetDetails(), MessageBoxViewportAlignment.Center));
                     }
                 }
                 else if (_menuEntries[_selectedEntry].SettingsChange != null)
