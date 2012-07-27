@@ -56,6 +56,8 @@ namespace KevinsDemo.ScreenSystem
         private EntryType _type;
         private float _width;
 
+        private bool _optionRequiresRestart;
+
         /// <summary>
         /// Constructs a new menu entry with the specified text.
         /// </summary>
@@ -68,6 +70,7 @@ namespace KevinsDemo.ScreenSystem
             _scale = 0.9f;
             _alpha = 1.0f;
             _settingsChange = null;
+            _optionRequiresRestart = false;
         }
 
         public MenuEntry(GameScreen owningScreen, string text, EntryType type, GameScreen linkScreen, bool closeParentScreen)
@@ -80,9 +83,10 @@ namespace KevinsDemo.ScreenSystem
             _scale = 0.9f;
             _alpha = 1.0f;
             _settingsChange = null;
+            _optionRequiresRestart = false;
         }
 
-        public MenuEntry(GameScreen owningScreen, SettingsChangeDisplayUpdate displayUpdateFunction, EntryType type, SettingsChangeDelegate settingsChange)
+        public MenuEntry(GameScreen owningScreen, SettingsChangeDisplayUpdate displayUpdateFunction, EntryType type, SettingsChangeDelegate settingsChange, bool optionRequiresRestart)
         {
             _text = displayUpdateFunction();
             _owningScreen = owningScreen;
@@ -92,6 +96,12 @@ namespace KevinsDemo.ScreenSystem
             _alpha = 1.0f;
             _settingsChange = settingsChange;
             _displayUpdateFunction = displayUpdateFunction;
+            _optionRequiresRestart = optionRequiresRestart;
+        }
+
+        public bool OptionRequiresRestart
+        {
+            get { return _optionRequiresRestart; }
         }
 
         /// <summary>
@@ -205,6 +215,10 @@ namespace KevinsDemo.ScreenSystem
                     _selectionFade = Math.Max(_selectionFade - fadeSpeed, 0f);
                 }
                 _scale = 0.7f + 0.1f * _selectionFade;
+            }
+            if (_type == EntryType.OptionsItem)
+            {
+                _text = _displayUpdateFunction();
             }
         }
 

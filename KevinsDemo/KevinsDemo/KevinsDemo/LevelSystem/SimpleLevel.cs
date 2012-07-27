@@ -18,6 +18,7 @@ using DPSF.ParticleSystems;
 using ParticleObjects;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
+using KevinsDemo.NPCs.Enemies;
 
 namespace KevinsDemo.LevelSystem
 {
@@ -41,7 +42,9 @@ namespace KevinsDemo.LevelSystem
 
         //The campfire
         private Campfire _fire;
-        private SpriteParticleSystem _spriteParticles;
+        //private SpriteParticleSystem _spriteParticles;
+
+        private SimpleTestEnemy _enemy;
 
         private Game _parentGame;
 
@@ -99,8 +102,9 @@ namespace KevinsDemo.LevelSystem
             
             //Create the character
             _pc = new Character(World, ScreenManager.Content,Camera.ConvertScreenToWorld(new Vector2(ScreenManager.GraphicsDevice.Viewport.Bounds.Center.X,ScreenManager.GraphicsDevice.Viewport.Bounds.Center.Y + 50f)));
-            _spriteParticles = new SpriteParticleSystem(_parentGame, new Vector3(ScreenManager.GraphicsDevice.Viewport.Bounds.Center.X, ScreenManager.GraphicsDevice.Viewport.Bounds.Center.Y+50, 0f),_pc.Bounds);
-            _spriteParticles.AutoInitialize(_parentGame.GraphicsDevice, _parentGame.Content, ScreenManager.SpriteBatch);
+            _enemy = new SimpleTestEnemy(_parentGame, ScreenManager.Content, Camera.ConvertScreenToWorld(new Vector2(10f, 10f)), 1500);
+            //_spriteParticles = new SpriteParticleSystem(_parentGame, new Vector3(ScreenManager.GraphicsDevice.Viewport.Bounds.Center.X, ScreenManager.GraphicsDevice.Viewport.Bounds.Center.Y+50, 0f),_pc.Bounds);
+            //_spriteParticles.AutoInitialize(_parentGame.GraphicsDevice, _parentGame.Content, ScreenManager.SpriteBatch);
             //_spriteParticles.AttractorMode = SpriteParticleSystem.EAttractorModes.Attract;
             //_spriteParticles.AttractorPosition = new Vector3(_pc.Body.Position, 0f);
 
@@ -144,7 +148,7 @@ namespace KevinsDemo.LevelSystem
         {
             _blur.UnloadContent();
             _fire.UnloadContent();
-            _spriteParticles.Destroy();
+            _enemy.UnloadContent();
             base.UnloadContent();
         }
 
@@ -153,8 +157,7 @@ namespace KevinsDemo.LevelSystem
             ScreenManager.GraphicsDevice.SetRenderTarget(_RT);
 
             ScreenManager.GraphicsDevice.Clear(Color.Black);
-            if (drawParticles)
-                _spriteParticles.Draw();
+            
             ScreenManager.SpriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, Camera.View);
             for(int i = 0; i < _buildings.Length;i++)
                 _buildings[i].Draw(ScreenManager.SpriteBatch);
@@ -163,6 +166,7 @@ namespace KevinsDemo.LevelSystem
 
             ScreenManager.SpriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, Camera.View);
             _pc.Draw(ScreenManager.SpriteBatch);
+            _enemy.Draw(ScreenManager.SpriteBatch);
             ScreenManager.SpriteBatch.End();
 
             _fire.DrawParticles();
@@ -186,24 +190,13 @@ namespace KevinsDemo.LevelSystem
                 SoundEffectsManager.Play(_heartBeat);
             _fire.Update(gameTime, Camera);
             Vector2 screenPos = Camera.ConvertWorldToScreen(_pc.Body.Position);
-            if(!onFire)
-                _spriteParticles.AttractorPosition = new Vector3(screenPos.X, screenPos.Y, 0f);
-            _spriteParticles.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+            _enemy.Update(gameTime);
             base.Update(gameTime, otherScreenHasFocus, coveredByOtherScreen);
         }
-        private bool drawParticles = true;
-        private bool onFire = false;
+
         public override void HandleInput(InputHelper input, GameTime gameTime)
         {
             _pc.HandleInput(input, gameTime);
-            if(input.GamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.B)&&!input.PreviousGamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.B))
-                drawParticles = !drawParticles;
-            if (input.GamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.X) && !input.PreviousGamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.X))
-            {
-                onFire = !onFire;
-                _spriteParticles.AttractorPosition = new Vector3(Camera.ConvertWorldToScreen(_fire.Body.Position + Camera.Position), 0f);
-            }
-            _spriteParticles.HandleInput(input, gameTime);
             base.HandleInput(input, gameTime);
         }
     }

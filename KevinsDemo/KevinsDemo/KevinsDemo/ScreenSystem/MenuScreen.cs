@@ -12,29 +12,29 @@ namespace KevinsDemo.ScreenSystem
     public class MenuScreen : GameScreen
     {
 #if WINDOWS || XBOX
-        private const float NumEntries = 15;
+        protected const float NumEntries = 15;
 #elif WINDOWS_PHONE
-        private const float NumEntries = 9;
+        protected const float NumEntries = 9;
 #endif
-        private List<MenuEntry> _menuEntries = new List<MenuEntry>();
-        private string _menuTitle;
-        private bool _isMainMenu;
-        private Vector2 _titlePosition;
-        private Vector2 _titleOrigin;
-        private int _selectedEntry;
-        private float _menuBorderTop;
-        private float _menuBorderBottom;
-        private float _menuBorderMargin;
-        private float _menuOffset;
-        private float _maxOffset;
+        protected List<MenuEntry> _menuEntries = new List<MenuEntry>();
+        protected string _menuTitle;
+        protected bool _isMainMenu;
+        protected Vector2 _titlePosition;
+        protected Vector2 _titleOrigin;
+        protected int _selectedEntry;
+        protected float _menuBorderTop;
+        protected float _menuBorderBottom;
+        protected float _menuBorderMargin;
+        protected float _menuOffset;
+        protected float _maxOffset;
 
-        private Texture2D _texScrollButton;
-        private Texture2D _texSlider;
+        protected Texture2D _texScrollButton;
+        protected Texture2D _texSlider;
 
-        private MenuButton _scrollUp;
-        private MenuButton _scrollDown;
-        private MenuButton _scrollSlider;
-        private bool _scrollLock;
+        protected MenuButton _scrollUp;
+        protected MenuButton _scrollDown;
+        protected MenuButton _scrollSlider;
+        protected bool _scrollLock;
         
         /// <summary>
         /// Constructor.
@@ -56,12 +56,6 @@ namespace KevinsDemo.ScreenSystem
         public void AddMenuItem(string name, EntryType type, GameScreen screen)
         {
             MenuEntry entry = new MenuEntry(this, name, type, screen);
-            _menuEntries.Add(entry);
-        }
-
-        public void AddMenuItem(MenuEntry.SettingsChangeDisplayUpdate displayChangeUpdate, EntryType type, MenuEntry.SettingsChangeDelegate settingsChange, object settingsChangeParameter)
-        {
-            MenuEntry entry = new MenuEntry(this, displayChangeUpdate, type, settingsChange);
             _menuEntries.Add(entry);
         }
 
@@ -107,7 +101,7 @@ namespace KevinsDemo.ScreenSystem
         /// Returns the index of the menu entry at the position of the given mouse state.
         /// </summary>
         /// <returns>Index of menu entry if valid, -1 otherwise</returns>
-        private int GetMenuEntryAt(Vector2 position)
+        protected int GetMenuEntryAt(Vector2 position)
         {
             int index = 0;
             foreach (MenuEntry entry in _menuEntries)
@@ -173,14 +167,11 @@ namespace KevinsDemo.ScreenSystem
                     ScreenManager.AddScreen(_menuEntries[_selectedEntry].LinkScreen);
                     if (_menuEntries[_selectedEntry].LinkScreen is IDemoScreen)
                     {
-                        MessageBoxScreen instructions = new MessageBoxScreen((_menuEntries[_selectedEntry].LinkScreen as IDemoScreen).GetDetails()+"\nCentered", MessageBoxViewportAlignment.Center);
+                        MessageBoxScreen instructions = new MessageBoxScreen((_menuEntries[_selectedEntry].LinkScreen as IDemoScreen).GetDetails(), MessageBoxViewportAlignment.Center);
                         ScreenManager.AddScreen(instructions);
                     }
                 }
-                else if (_menuEntries[_selectedEntry].SettingsChange != null)
-                {
-                    _menuEntries[_selectedEntry].ModifyOption(null);
-                }
+                
             }
             else if (input.IsMenuCancel())
             {

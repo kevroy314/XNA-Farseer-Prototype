@@ -27,6 +27,8 @@ namespace KevinsDemo.ScreenSystem
 
         private SpriteBatch _spriteBatch;
 
+        private GraphicsDeviceManager _graphics;
+
         /// <summary>
         /// Contains all the fonts avaliable for use.
         /// </summary>
@@ -37,7 +39,7 @@ namespace KevinsDemo.ScreenSystem
         /// <summary>
         /// Constructs a new screen manager component.
         /// </summary>
-        public ScreenManager(Game game)
+        public ScreenManager(Game game, GraphicsDeviceManager graphics)
             : base(game)
         {
             // we must set EnabledGestures before we can query for them, but
@@ -50,6 +52,8 @@ namespace KevinsDemo.ScreenSystem
             _screens = new List<GameScreen>();
             _screensToUpdate = new List<GameScreen>();
             _transitions = new List<RenderTarget2D>();
+
+            _graphics = graphics;
         }
 
         /// <summary>
@@ -79,6 +83,11 @@ namespace KevinsDemo.ScreenSystem
         public AssetCreator Assets
         {
             get { return _assetCreator; }
+        }
+
+        public GraphicsDeviceManager GraphicsDeviceManager
+        {
+            get { return _graphics; }
         }
 
         /// <summary>

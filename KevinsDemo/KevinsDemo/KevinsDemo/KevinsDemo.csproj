@@ -122,6 +122,7 @@
     <Compile Include="FullScreenEffects\VariableBlurEffect.cs" />
     <Compile Include="GlobalGameOptions.cs" />
     <Compile Include="KevinsHelperFunctions.cs" />
+    <Compile Include="NPCs\Enemies\SimpleTestEnemy.cs" />
     <Compile Include="ParticleObjects\Campfire.cs" />
     <Compile Include="ParticleSystem\Templates\DefaultQuadParticleSystemTemplate.cs" />
     <Compile Include="ParticleSystem\Templates\DefaultSprite3DBillboardParticleSystemTemplate.cs" />
@@ -160,6 +161,7 @@
     <Compile Include="ScreenSystem\GameScreen.cs" />
     <Compile Include="ScreenSystem\IDemoScreen.cs" />
     <Compile Include="ScreenSystem\InputHelper.cs" />
+    <Compile Include="ScreenSystem\OptionsMenu.cs" />
     <Compile Include="ScreenSystem\PauseScreen.cs" />
     <Compile Include="ScreenSystem\PhysicsGameScreen.cs" />
     <Compile Include="ScreenSystem\ScreenManagerComponent.cs" />

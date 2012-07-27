@@ -4,6 +4,7 @@ using KevinsDemo.LevelSystem;
 using KevinsDemo.ScreenSystem;
 using KevinsDemo.UIElements;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace KevinsDemo
 {
@@ -17,7 +18,12 @@ namespace KevinsDemo
         public GameMain()
         {
             Window.Title = "Kevin's Game Demo";
+
             _graphics = new GraphicsDeviceManager(this);
+
+            int nativeWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            int nativeHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+
             _graphics.PreferMultiSampling = true;
 #if WINDOWS || XBOX
             _graphics.PreferredBackBufferWidth = 1280;
@@ -39,15 +45,22 @@ namespace KevinsDemo
             Content.RootDirectory = "Content";
 
             //new-up components and add to Game.Components
-            ScreenManager = new ScreenManager(this);
+            ScreenManager = new ScreenManager(this, _graphics);
             Components.Add(ScreenManager);
 
             FrameRateCounter frameRateCounter = new FrameRateCounter(ScreenManager);
             frameRateCounter.DrawOrder = 101;
             Components.Add(frameRateCounter);
+
+            GlobalGameOptions.InitOptions();
+            if (_graphics.IsFullScreen)
+            {
+                _graphics.PreferredBackBufferWidth = nativeWidth;
+                _graphics.PreferredBackBufferHeight = nativeHeight;
+            }
         }
 
-        public ScreenManager ScreenManager { get; set; }
+        public static ScreenManager ScreenManager { get; set; }
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -58,11 +71,9 @@ namespace KevinsDemo
         {
             base.Initialize();
 
-            GlobalGameOptions.InitOptions();
-
             SimpleLevel samplelevel1 = new SimpleLevel(this);
 
-            MenuScreen optionsScreen = GlobalGameOptions.OptionsMenu;
+            OptionsMenu optionsScreen = GlobalGameOptions.OptionsMenu;
 
             MenuScreen menuScreen = new MenuScreen("", true);
 

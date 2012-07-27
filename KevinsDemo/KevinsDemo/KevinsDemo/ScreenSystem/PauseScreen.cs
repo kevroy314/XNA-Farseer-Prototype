@@ -68,12 +68,6 @@ namespace KevinsDemo.ScreenSystem
             _menuEntries.Add(entry);
         }
 
-        public void AddMenuItem(MenuEntry.SettingsChangeDisplayUpdate displayChangeUpdate, EntryType type, MenuEntry.SettingsChangeDelegate settingsChange, object settingsChangeParameter)
-        {
-            MenuEntry entry = new MenuEntry(this, displayChangeUpdate, type, settingsChange);
-            _menuEntries.Add(entry);
-        }
-
         public override void LoadContent()
         {
             base.LoadContent();
