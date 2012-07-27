@@ -70,6 +70,8 @@ namespace KevinsDemo.LevelSystem
 
         #endregion
 
+        private string[] songs = { };
+
         public override void LoadContent()
         {
             base.LoadContent();
@@ -77,8 +79,6 @@ namespace KevinsDemo.LevelSystem
             //Initialize the render targets to the viewport size
             _RT = new RenderTarget2D(ScreenManager.GraphicsDevice, ScreenManager.GraphicsDevice.Viewport.Bounds.Width, ScreenManager.GraphicsDevice.Viewport.Bounds.Height, false, ScreenManager.GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.None);
             _blurredRT = new RenderTarget2D(ScreenManager.GraphicsDevice, ScreenManager.GraphicsDevice.Viewport.Bounds.Width, ScreenManager.GraphicsDevice.Viewport.Bounds.Height, false, ScreenManager.GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.None);
-
-            _backgroundMusic = ScreenManager.Content.Load<Song>("Music/caketown");
 
             _heartBeat = ScreenManager.Content.Load<SoundEffect>("SoundEffects/doublebeat");
 
@@ -115,8 +115,29 @@ namespace KevinsDemo.LevelSystem
             //There is no gravity
             World.Gravity = Vector2.Zero;
 
-            MediaPlayer.IsRepeating = true;
+            setBackgroundMusicToRandomChrono();
+            MediaPlayer.MediaStateChanged += new EventHandler<EventArgs>(MediaPlayer_MediaStateChanged);
+        }
+        public void setBackgroundMusicToRandomChrono()
+        {
+            Random rand = new Random();
+            int songNum = rand.Next(1, 63);
+            bool worked = true;
+            do
+            {
+                try
+                {
+                    _backgroundMusic = ScreenManager.Content.Load<Song>("Music/" + songNum);
+                    worked = true;
+                }
+                catch (Exception) { worked = false; }
+            } while (!worked);
             MediaPlayer.Play(_backgroundMusic);
+        }
+        void MediaPlayer_MediaStateChanged(object sender, EventArgs e)
+        {
+            if (MediaPlayer.State == MediaState.Stopped)
+                setBackgroundMusicToRandomChrono();
         }
 
         public override void UnloadContent()
@@ -132,14 +153,13 @@ namespace KevinsDemo.LevelSystem
             ScreenManager.GraphicsDevice.SetRenderTarget(_RT);
 
             ScreenManager.GraphicsDevice.Clear(Color.Black);
-
+            if (drawParticles)
+                _spriteParticles.Draw();
             ScreenManager.SpriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, Camera.View);
             for(int i = 0; i < _buildings.Length;i++)
                 _buildings[i].Draw(ScreenManager.SpriteBatch);
             _fire.Draw(ScreenManager.SpriteBatch);
             ScreenManager.SpriteBatch.End();
-
-            _spriteParticles.Draw();
 
             ScreenManager.SpriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, Camera.View);
             _pc.Draw(ScreenManager.SpriteBatch);
@@ -166,14 +186,24 @@ namespace KevinsDemo.LevelSystem
                 SoundEffectsManager.Play(_heartBeat);
             _fire.Update(gameTime, Camera);
             Vector2 screenPos = Camera.ConvertWorldToScreen(_pc.Body.Position);
-            _spriteParticles.AttractorPosition = new Vector3(screenPos.X, screenPos.Y, 0f);
+            if(!onFire)
+                _spriteParticles.AttractorPosition = new Vector3(screenPos.X, screenPos.Y, 0f);
             _spriteParticles.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
             base.Update(gameTime, otherScreenHasFocus, coveredByOtherScreen);
         }
-
+        private bool drawParticles = true;
+        private bool onFire = false;
         public override void HandleInput(InputHelper input, GameTime gameTime)
         {
             _pc.HandleInput(input, gameTime);
+            if(input.GamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.B)&&!input.PreviousGamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.B))
+                drawParticles = !drawParticles;
+            if (input.GamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.X) && !input.PreviousGamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.X))
+            {
+                onFire = !onFire;
+                _spriteParticles.AttractorPosition = new Vector3(Camera.ConvertWorldToScreen(_fire.Body.Position + Camera.Position), 0f);
+            }
+            _spriteParticles.HandleInput(input, gameTime);
             base.HandleInput(input, gameTime);
         }
     }

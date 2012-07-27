@@ -110,5 +110,10 @@ namespace ParticleObjects
         {
             _particleSystem.Draw();
         }
+
+        public Body Body
+        {
+            get { return _body; }
+        }
     }
 }

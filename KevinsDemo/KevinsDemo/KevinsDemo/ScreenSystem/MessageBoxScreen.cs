@@ -164,12 +164,5 @@ namespace KevinsDemo.ScreenSystem
         {
             get { return _backgroundRectangle; }
         }
-
-        public void offsetLocation(int x, int y)
-        {
-            _backgroundRectangle.Offset(x, y);
-            _textPosition.X += x;
-            _textPosition.Y += y;
-        }
     }
 }

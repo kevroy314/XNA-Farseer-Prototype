@@ -58,6 +58,8 @@ namespace KevinsDemo
         {
             base.Initialize();
 
+            GlobalGameOptions.InitOptions();
+
             SimpleLevel samplelevel1 = new SimpleLevel(this);
 
             MenuScreen optionsScreen = GlobalGameOptions.OptionsMenu;

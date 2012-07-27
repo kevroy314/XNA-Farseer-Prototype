@@ -200,19 +200,12 @@ namespace KevinsDemo.ScreenSystem
                 _gestures.Add(TouchPanel.ReadGesture());
             }
 
-            // Update cursor
+            // Update cursor from gamepad
             Vector2 oldCursor = _cursor;
-            if (_currentGamePadState.IsConnected && _currentGamePadState.ThumbSticks.Left != Vector2.Zero)
-            {
-                Vector2 temp = _currentGamePadState.ThumbSticks.Left;
-                _cursor += temp * new Vector2(300f, -300f) * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                Mouse.SetPosition((int)_cursor.X, (int)_cursor.Y);
-            }
-            else
-            {
-                _cursor.X = _currentMouseState.X;
-                _cursor.Y = _currentMouseState.Y;
-            }
+
+            _cursor.X = _currentMouseState.X;
+            _cursor.Y = _currentMouseState.Y;
+
             _cursor.X = MathHelper.Clamp(_cursor.X, 0f, _viewport.Width);
             _cursor.Y = MathHelper.Clamp(_cursor.Y, 0f, _viewport.Height);
 

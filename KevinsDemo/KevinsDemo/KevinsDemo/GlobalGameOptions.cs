@@ -8,11 +8,14 @@ using KevinsDemo.ScreenSystem;
 namespace KevinsDemo
 {
     class GlobalGameOptions
-    {
-        public static bool SoundEffectsOn = true;
-        public static bool FullScreen = false;
-
+    {   
         private static MenuScreen _optionsMenu = GenerateOptionsMenu();
+
+        public static void InitOptions()
+        {
+            SoundEffectsManager.IsMuted = true;
+            MediaPlayer.IsMuted = false;
+        }
 
         private static MenuScreen GenerateOptionsMenu()
         {

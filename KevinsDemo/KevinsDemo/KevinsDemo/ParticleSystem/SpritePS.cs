@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using KevinsDemo;
+using KevinsDemo.ScreenSystem;
 #endregion
 
 namespace DPSF.ParticleSystems
@@ -63,7 +64,9 @@ namespace DPSF.ParticleSystems
         int miScreenOffsetY;
 		int miRows = 0;
 		int miColumns = 0;
-
+        //int miRepellerCounter = 0;
+        //int miRepellerResetCount = 1000000;
+        
 		// The position to attract the Particles to. This could be implemented much easier
 		// by using a Default Particle System Magnet instead, but this was implemented before
 		// the Magnets so I'm leaving it as an example. To see how to do a similar effect
@@ -140,7 +143,7 @@ namespace DPSF.ParticleSystems
 			Emitter.PositionData.Position = new Vector3(miScreenWidth / 2, miScreenHeight / 2, 0);
 			AttractorMode = EAttractorModes.None;
 			msAttractorPosition = new Vector3(miScreenWidth / 2, miScreenHeight / 2, 0);
-			mfAttractorAffectDistance = 300;
+			mfAttractorAffectDistance = 600;
 
 			InitialProperties.LifetimeMin = 3.0f;
 			InitialProperties.LifetimeMax = 3.0f;
@@ -148,8 +151,8 @@ namespace DPSF.ParticleSystems
 			InitialProperties.PositionMax = Vector3.Zero;
 			InitialProperties.VelocityMin = new Vector3(-25, -25, -25);
 			InitialProperties.VelocityMax = new Vector3(25, 25, 25);
-			InitialProperties.AccelerationMin = Vector3.Zero;
-			InitialProperties.AccelerationMax = Vector3.Zero;
+			InitialProperties.AccelerationMin = new Vector3(-25,-25,-25);
+            InitialProperties.AccelerationMax = new Vector3(25, 25, 25);
 			InitialProperties.StartColorMin = Color.Red;
 			InitialProperties.StartColorMax = Color.White;
 			InitialProperties.EndColorMin = Color.Blue;
@@ -390,6 +393,9 @@ namespace DPSF.ParticleSystems
 			{
 				cParticle.Acceleration = Vector3.Zero;
 			}
+            //miRepellerCounter++;
+            //if (miRepellerCounter > miRepellerResetCount)
+                //AttractorMode = EAttractorModes.Repel;
 		}
 
 		protected void UpdateParticleRepelParticleFromAttractor(SpriteParticle cParticle, float fElapsedTimeInSeconds)
@@ -417,6 +423,8 @@ namespace DPSF.ParticleSystems
 			{
 				cParticle.Acceleration = Vector3.Zero;
 			}
+            //miRepellerCounter = 0;
+            //AttractorMode = EAttractorModes.Attract;
 		}
 
 		protected void UpdateParticleRotateParticleAroundPivotPoint(SpriteParticle cParticle, float fElapsedTimeInSeconds)
@@ -593,5 +601,10 @@ namespace DPSF.ParticleSystems
 				}
 			}
 		}
+        public void HandleInput(InputHelper input, GameTime gameTime)
+        {
+            //if (input.GamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.A) && !input.PreviousGamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.A))
+                //AttractorMode = EAttractorModes.Repel;
+        }
 	}
 }

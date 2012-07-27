@@ -175,17 +175,6 @@ namespace KevinsDemo.ScreenSystem
                     {
                         MessageBoxScreen instructions = new MessageBoxScreen((_menuEntries[_selectedEntry].LinkScreen as IDemoScreen).GetDetails()+"\nCentered", MessageBoxViewportAlignment.Center);
                         ScreenManager.AddScreen(instructions);
-                        MessageBoxScreen offsetBox = new MessageBoxScreen("Center Offset", MessageBoxViewportAlignment.Center);
-                        offsetBox.offsetLocation(0, instructions.Bounds.Height);
-                        ScreenManager.AddScreen(offsetBox);
-                        ScreenManager.AddScreen(new MessageBoxScreen("CenterBottom", MessageBoxViewportAlignment.CenterBottom));
-                        ScreenManager.AddScreen(new MessageBoxScreen("BottomLeft", MessageBoxViewportAlignment.BottomLeft));
-                        ScreenManager.AddScreen(new MessageBoxScreen("CenterLeft", MessageBoxViewportAlignment.CenterLeft));
-                        ScreenManager.AddScreen(new MessageBoxScreen("TopLeft", MessageBoxViewportAlignment.TopLeft));
-                        ScreenManager.AddScreen(new MessageBoxScreen("CenterTop", MessageBoxViewportAlignment.CenterTop));
-                        ScreenManager.AddScreen(new MessageBoxScreen("TopRight", MessageBoxViewportAlignment.TopRight));
-                        ScreenManager.AddScreen(new MessageBoxScreen("CenterRight", MessageBoxViewportAlignment.CenterRight));
-                        ScreenManager.AddScreen(new MessageBoxScreen("BottomRight", MessageBoxViewportAlignment.BottomRight));
                     }
                 }
                 else if (_menuEntries[_selectedEntry].SettingsChange != null)
