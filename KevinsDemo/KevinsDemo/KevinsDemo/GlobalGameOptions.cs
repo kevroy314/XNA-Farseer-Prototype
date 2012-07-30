@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Storage;
 using System.IO;
 using System.Xml.Serialization;
+using KevinsDemo.AudioSystem;
 
 namespace KevinsDemo
 {
@@ -34,7 +35,7 @@ namespace KevinsDemo
         public static void ResetOptionsToDefault()
         {
             SoundEffectsManager.IsMuted = false;
-            MediaPlayer.IsMuted = false;
+            MusicManager.IsMuted = false;
             GameMain.ScreenManager.GraphicsDeviceManager.IsFullScreen = false;
         }
 
@@ -43,14 +44,14 @@ namespace KevinsDemo
             get
             {
                 OptionsDataStruct data;
-                data.IsMediaPlayerMuted = MediaPlayer.IsMuted;
+                data.IsMediaPlayerMuted = MusicManager.IsMuted;
                 data.IsSoundEffectManagerMuted = SoundEffectsManager.IsMuted;
                 data.IsFullScreen = GameMain.ScreenManager.GraphicsDeviceManager.IsFullScreen;
                 return data;
             }
             set
             {
-                MediaPlayer.IsMuted = value.IsMediaPlayerMuted;
+                MusicManager.IsMuted = value.IsMediaPlayerMuted;
                 SoundEffectsManager.IsMuted = value.IsSoundEffectManagerMuted;
                 GameMain.ScreenManager.GraphicsDeviceManager.IsFullScreen = value.IsFullScreen;
             }
@@ -146,18 +147,18 @@ namespace KevinsDemo
             {
                 if (param.GetType() == typeof(bool))
                 {
-                    MediaPlayer.IsMuted = (bool)param;
-                    return MediaPlayer.IsMuted;
+                    MusicManager.IsMuted = (bool)param;
+                    return MusicManager.IsMuted;
                 }
             }
 
-            MediaPlayer.IsMuted = !MediaPlayer.IsMuted;
+            MusicManager.ToggleMute();
 
-            return MediaPlayer.IsMuted;
+            return MusicManager.IsMuted;
         }
         private static string GetMusicStateString()
         {
-            return "Music: " + (MediaPlayer.IsMuted ? "Off" : "On");
+            return "Music: " + (MusicManager.IsMuted ? "Off" : "On");
         }
 
         private static object ToggleSoundEffects(object param)

@@ -19,6 +19,7 @@ using ParticleObjects;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
 using KevinsDemo.NPCs.Enemies;
+using KevinsDemo.AudioSystem;
 
 namespace KevinsDemo.LevelSystem
 {
@@ -29,7 +30,6 @@ namespace KevinsDemo.LevelSystem
         //Render target for the post-processed blur effect
         private RenderTarget2D _blurredRT;
 
-        private Song _backgroundMusic;
         private SoundEffect _heartBeat;
 
         //The character
@@ -95,14 +95,14 @@ namespace KevinsDemo.LevelSystem
                 float r = 13f;
                 float xpos = cos * r;
                 float ypos = sin * r;
-                _buildings[i] = new Building(World, ScreenManager.Content, new Vector2(xpos, ypos), 0, false, "EnvironmentObjects/Tents/" + buildingTypes[i], "EnvironmentObjects/Tents/" + buildingTypes[i]+"_collisions");
+                _buildings[i] = new Building(World, ScreenManager.Content, new Vector2(xpos, ypos), "EnvironmentObjects/Tents/" + buildingTypes[i], "EnvironmentObjects/Tents/" + buildingTypes[i]+"_collisions");
             }
 
             _fire = new Campfire(_parentGame, World, ScreenManager.SpriteBatch, Vector2.Zero);
             
             //Create the character
             _pc = new Character(World, ScreenManager.Content,Camera.ConvertScreenToWorld(new Vector2(ScreenManager.GraphicsDevice.Viewport.Bounds.Center.X,ScreenManager.GraphicsDevice.Viewport.Bounds.Center.Y + 50f)));
-            _enemy = new SimpleTestEnemy(_parentGame, ScreenManager.Content, Camera.ConvertScreenToWorld(new Vector2(10f, 10f)), 1500);
+            _enemy = new SimpleTestEnemy(_parentGame, ScreenManager.Content, Camera.ConvertWorldToScreen(new Vector2(10f, 10f)), 1500);
             //_spriteParticles = new SpriteParticleSystem(_parentGame, new Vector3(ScreenManager.GraphicsDevice.Viewport.Bounds.Center.X, ScreenManager.GraphicsDevice.Viewport.Bounds.Center.Y+50, 0f),_pc.Bounds);
             //_spriteParticles.AutoInitialize(_parentGame.GraphicsDevice, _parentGame.Content, ScreenManager.SpriteBatch);
             //_spriteParticles.AttractorMode = SpriteParticleSystem.EAttractorModes.Attract;
@@ -119,29 +119,7 @@ namespace KevinsDemo.LevelSystem
             //There is no gravity
             World.Gravity = Vector2.Zero;
 
-            setBackgroundMusicToRandomChrono();
-            MediaPlayer.MediaStateChanged += new EventHandler<EventArgs>(MediaPlayer_MediaStateChanged);
-        }
-        public void setBackgroundMusicToRandomChrono()
-        {
-            Random rand = new Random();
-            int songNum = rand.Next(1, 63);
-            bool worked = true;
-            do
-            {
-                try
-                {
-                    _backgroundMusic = ScreenManager.Content.Load<Song>("Music/" + songNum);
-                    worked = true;
-                }
-                catch (Exception) { worked = false; }
-            } while (!worked);
-            MediaPlayer.Play(_backgroundMusic);
-        }
-        void MediaPlayer_MediaStateChanged(object sender, EventArgs e)
-        {
-            if (MediaPlayer.State == MediaState.Stopped)
-                setBackgroundMusicToRandomChrono();
+            MusicManager.InitializeMusicManager();
         }
 
         public override void UnloadContent()
@@ -190,7 +168,7 @@ namespace KevinsDemo.LevelSystem
                 SoundEffectsManager.Play(_heartBeat);
             _fire.Update(gameTime, Camera);
             Vector2 screenPos = Camera.ConvertWorldToScreen(_pc.Body.Position);
-            _enemy.Update(gameTime);
+            _enemy.Update(gameTime, Camera);
             base.Update(gameTime, otherScreenHasFocus, coveredByOtherScreen);
         }
 

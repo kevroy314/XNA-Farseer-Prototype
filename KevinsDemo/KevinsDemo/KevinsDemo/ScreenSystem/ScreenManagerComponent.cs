@@ -15,12 +15,11 @@ namespace KevinsDemo.ScreenSystem
     /// </summary>
     public class ScreenManager : DrawableGameComponent
     {
-        private AssetCreator _assetCreator;
+
         private ContentManager _contentManager;
 
         private InputHelper _input;
         private bool _isInitialized;
-        private LineBatch _lineBatch;
 
         private List<GameScreen> _screens;
         private List<GameScreen> _screensToUpdate;
@@ -65,11 +64,6 @@ namespace KevinsDemo.ScreenSystem
             get { return _spriteBatch; }
         }
 
-        public LineBatch LineBatch
-        {
-            get { return _lineBatch; }
-        }
-
         public ContentManager Content
         {
             get { return _contentManager; }
@@ -78,11 +72,6 @@ namespace KevinsDemo.ScreenSystem
         public SpriteFonts Fonts
         {
             get { return _spriteFonts; }
-        }
-
-        public AssetCreator Assets
-        {
-            get { return _assetCreator; }
         }
 
         public GraphicsDeviceManager GraphicsDeviceManager
@@ -107,9 +96,6 @@ namespace KevinsDemo.ScreenSystem
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _lineBatch = new LineBatch(GraphicsDevice);
-            _assetCreator = new AssetCreator(GraphicsDevice);
-            _assetCreator.LoadContent(_contentManager);
             _input.LoadContent();
 
             // Tell each of the screens to load their content.

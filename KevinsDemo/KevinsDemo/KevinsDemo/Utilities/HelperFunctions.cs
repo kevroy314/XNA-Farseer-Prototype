@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace KevinsDemo
 {
-    public class KevinsHelperFunctions
+    public class HelperFunctions
     {
         public static Color HSL2RGB(double h, double sl, double l)
         {

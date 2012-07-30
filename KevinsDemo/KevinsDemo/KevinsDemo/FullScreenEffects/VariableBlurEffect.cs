@@ -11,24 +11,24 @@ namespace KevinsDemo.FullScreenEffects
     public class VariableBlurEffect
     {
         //The shader effect object
-        private Effect blurEffect;
+        private Effect _blurEffect;
 
         //The render targets for horizontal and vertical blurs
-        private RenderTarget2D blurHorizontalRT;
-        private RenderTarget2D blurVerticalRT;
+        private RenderTarget2D _blurHorizontalRT;
+        private RenderTarget2D _blurVerticalRT;
         
         //The list of parameters for each intensity of blur
-        private Tuple<float[], Vector2[]>[] blurParamsHoriz;
-        private Tuple<float[], Vector2[]>[] blurParamsVert;
+        private Tuple<float[], Vector2[]>[] _blurParamsHoriz;
+        private Tuple<float[], Vector2[]>[] _blurParamsVert;
 
         //The current blur intensity
-        private float blurIntensity;
+        private float _blurIntensity;
         //The counter allowing us to keep track of where in the pulse cycle we are
-        private int blurCount;
+        private int _blurCount;
         //The frame counter to determine which blur frame we're on
-        private int blurFrameCount;
+        private int _blurFrameCount;
         //The amount of time we wait inbetween each pulse
-        private int blurWaitLength;
+        private int _blurWaitLength;
 
         //Constructor taking in the content manager, graphics device, bounds, and blur pulse parameters
         //Beat speed in frames
@@ -36,18 +36,18 @@ namespace KevinsDemo.FullScreenEffects
         public VariableBlurEffect(Microsoft.Xna.Framework.Content.ContentManager content, GraphicsDevice device, Rectangle renderTargetBounds, int beatNumberOfFrames, int beatNumberOfWaitFrames, float beatIntensity)
         {
             //Load the blur effect from the content manager
-            blurEffect = content.Load<Effect>("Effects/Blur");
+            _blurEffect = content.Load<Effect>("Effects/Blur");
 
             //Create the render target
-            blurHorizontalRT = new RenderTarget2D(device, renderTargetBounds.Width, renderTargetBounds.Height, false, device.PresentationParameters.BackBufferFormat, DepthFormat.None);
-            blurVerticalRT = new RenderTarget2D(device, renderTargetBounds.Width, renderTargetBounds.Height, false, device.PresentationParameters.BackBufferFormat, DepthFormat.None);
+            _blurHorizontalRT = new RenderTarget2D(device, renderTargetBounds.Width, renderTargetBounds.Height, false, device.PresentationParameters.BackBufferFormat, DepthFormat.None);
+            _blurVerticalRT = new RenderTarget2D(device, renderTargetBounds.Width, renderTargetBounds.Height, false, device.PresentationParameters.BackBufferFormat, DepthFormat.None);
 
             //Initialize the blur parameter lists
-            blurParamsHoriz = new Tuple<float[], Vector2[]>[beatNumberOfFrames];
-            blurParamsVert = new Tuple<float[], Vector2[]>[beatNumberOfFrames];
+            _blurParamsHoriz = new Tuple<float[], Vector2[]>[beatNumberOfFrames];
+            _blurParamsVert = new Tuple<float[], Vector2[]>[beatNumberOfFrames];
 
             //Set the default blur intensity (note: 0 produces no image)
-            blurIntensity = 0.000001f;
+            _blurIntensity = 0.000001f;
 
             //initialize a counter for the blur intensity initialization as well as it's velocity
             float count = 0.000001f;
@@ -55,90 +55,90 @@ namespace KevinsDemo.FullScreenEffects
 
             //Get the sample count from the shader
             EffectParameter weightsParameter;
-            weightsParameter = blurEffect.Parameters["SampleWeights"];
+            weightsParameter = _blurEffect.Parameters["SampleWeights"];
             int sampleCount = weightsParameter.Elements.Count;
 
             //For each blur parameter, generate the appropriate gaussian
-            for (var i = 0; i < blurParamsHoriz.Length; i++)
+            for (var i = 0; i < _blurParamsHoriz.Length; i++)
             {
-                blurIntensity = (float)(-Math.Cos(count) * (beatIntensity / 2)) + (beatIntensity / 2);
-                if (blurIntensity == 0) blurIntensity = 0.000001f;
-                blurParamsHoriz[i] = GenerateBlurEffectParameters(0.001f, 0.0f, sampleCount);
-                blurParamsVert[i] = GenerateBlurEffectParameters(0.0f, 0.001f, sampleCount);
+                _blurIntensity = (float)(-Math.Cos(count) * (beatIntensity / 2)) + (beatIntensity / 2);
+                if (_blurIntensity == 0) _blurIntensity = 0.000001f;
+                _blurParamsHoriz[i] = GenerateBlurEffectParameters(0.001f, 0.0f, sampleCount);
+                _blurParamsVert[i] = GenerateBlurEffectParameters(0.0f, 0.001f, sampleCount);
                 count += countVelocity;
             }
 
             //Initialize the counters
-            blurCount = 0;
-            blurFrameCount = 0;
-            blurWaitLength = beatNumberOfWaitFrames;
+            _blurCount = 0;
+            _blurFrameCount = 0;
+            _blurWaitLength = beatNumberOfWaitFrames;
         }
 
         public float Update(GameTime gameTime)
         {
             //Iterate the blur counter
-            blurCount = (blurCount + 1) % (blurParamsHoriz.Length + blurWaitLength);
+            _blurCount = (_blurCount + 1) % (_blurParamsHoriz.Length + _blurWaitLength);
 
             //Determine if we're in a wait state, and what frame to generate
-            if (blurCount >= blurParamsHoriz.Length) blurFrameCount = 0;
-            else blurFrameCount = blurCount;
-            return (float)blurFrameCount/(float)blurParamsHoriz.Length;
+            if (_blurCount >= _blurParamsHoriz.Length) _blurFrameCount = 0;
+            else _blurFrameCount = _blurCount;
+            return (float)_blurFrameCount/(float)_blurParamsHoriz.Length;
         }
 
         public void UnloadContent()
         {
             //Dispose of the render targets
-            blurVerticalRT.Dispose();
-            blurHorizontalRT.Dispose();
+            _blurVerticalRT.Dispose();
+            _blurHorizontalRT.Dispose();
         }
 
         //Render a frame using a Texture2D input
         public RenderTarget2D RenderFrame(GraphicsDevice device, SpriteBatch batch, Texture2D preprocessedFrame, GameTime gameTime)
         {
             //Render horizontally
-            device.SetRenderTarget(blurHorizontalRT);
+            device.SetRenderTarget(_blurHorizontalRT);
             device.Clear(Color.Black);
-            SetBlurEffectParametersIndex(true, blurFrameCount);
-            batch.Begin(0, BlendState.Opaque, null, null, null, blurEffect);
+            SetBlurEffectParametersIndex(true, _blurFrameCount);
+            batch.Begin(0, BlendState.Opaque, null, null, null, _blurEffect);
             batch.Draw(preprocessedFrame, new Rectangle(0, 0, preprocessedFrame.Bounds.Width, preprocessedFrame.Bounds.Height), Color.White);
             batch.End();
 
             //Render vertically
-            device.SetRenderTarget(blurVerticalRT);
+            device.SetRenderTarget(_blurVerticalRT);
             device.Clear(Color.Black);
-            SetBlurEffectParametersIndex(false, blurFrameCount);
-            batch.Begin(0, BlendState.Opaque, null, null, null, blurEffect);
-            batch.Draw(blurHorizontalRT, new Rectangle(0, 0, preprocessedFrame.Bounds.Width, preprocessedFrame.Bounds.Height), Color.White);
+            SetBlurEffectParametersIndex(false, _blurFrameCount);
+            batch.Begin(0, BlendState.Opaque, null, null, null, _blurEffect);
+            batch.Draw(_blurHorizontalRT, new Rectangle(0, 0, preprocessedFrame.Bounds.Width, preprocessedFrame.Bounds.Height), Color.White);
             batch.End();
 
-            return blurVerticalRT;
+            return _blurVerticalRT;
         }
 
         //Render a frame using a RenderTarget2D
         public RenderTarget2D RenderFrame(GraphicsDevice device, SpriteBatch batch, RenderTarget2D preprocessedFrame, GameTime gameTime)
         {
             //Render horizontally
-            device.SetRenderTarget(blurHorizontalRT);
+            device.SetRenderTarget(_blurHorizontalRT);
             device.Clear(Color.Black);
-            SetBlurEffectParametersIndex(true, blurFrameCount);
-            batch.Begin(0, BlendState.Opaque, null, null, null, blurEffect);
+            SetBlurEffectParametersIndex(true, _blurFrameCount);
+            batch.Begin(0, BlendState.Opaque, null, null, null, _blurEffect);
             batch.Draw(preprocessedFrame, new Rectangle(0, 0, preprocessedFrame.Bounds.Width, preprocessedFrame.Bounds.Height), Color.White);
             batch.End();
 
             //Render vertically
-            device.SetRenderTarget(blurVerticalRT);
+            device.SetRenderTarget(_blurVerticalRT);
             device.Clear(Color.Black);
-            SetBlurEffectParametersIndex(false, blurFrameCount);
-            batch.Begin(0, BlendState.Opaque, null, null, null, blurEffect);
-            batch.Draw(blurHorizontalRT, new Rectangle(0, 0, preprocessedFrame.Bounds.Width, preprocessedFrame.Bounds.Height), Color.White);
+            SetBlurEffectParametersIndex(false, _blurFrameCount);
+            batch.Begin(0, BlendState.Opaque, null, null, null, _blurEffect);
+            batch.Draw(_blurHorizontalRT, new Rectangle(0, 0, preprocessedFrame.Bounds.Width, preprocessedFrame.Bounds.Height), Color.White);
             batch.End();
 
-            return blurVerticalRT;
+            return _blurVerticalRT;
         }
 
         private float ComputeGaussian(float n)
         {
-            float theta = blurIntensity; //10.0f is old default
+            float theta = _blurIntensity; //10.0f is old default
 
             return (float)((1.0 / Math.Sqrt(2 * Math.PI * theta)) *
                            Math.Exp(-(n * n) / (2 * theta * theta)));
@@ -200,8 +200,8 @@ namespace KevinsDemo.FullScreenEffects
             // Look up the sample weight and offset effect parameters.
             EffectParameter weightsParameter, offsetsParameter;
 
-            weightsParameter = blurEffect.Parameters["SampleWeights"];
-            offsetsParameter = blurEffect.Parameters["SampleOffsets"];
+            weightsParameter = _blurEffect.Parameters["SampleWeights"];
+            offsetsParameter = _blurEffect.Parameters["SampleOffsets"];
 
             // Look up how many samples our gaussian blur effect supports.
             int sampleCount = weightsParameter.Elements.Count;
@@ -218,20 +218,44 @@ namespace KevinsDemo.FullScreenEffects
             // Look up the sample weight and offset effect parameters.
             EffectParameter weightsParameter, offsetsParameter;
 
-            weightsParameter = blurEffect.Parameters["SampleWeights"];
-            offsetsParameter = blurEffect.Parameters["SampleOffsets"];
+            weightsParameter = _blurEffect.Parameters["SampleWeights"];
+            offsetsParameter = _blurEffect.Parameters["SampleOffsets"];
 
             // Look up how many samples our gaussian blur effect supports.
             int sampleCount = weightsParameter.Elements.Count;
             Tuple<float[], Vector2[]> sampleParams;
             if (horizontal) //If these are horizontal blur parameters, return the horizontal parameters
-                sampleParams = blurParamsHoriz[index];
+                sampleParams = _blurParamsHoriz[index];
             else //If these are vertical blur parameters, return the vertical parameters
-                sampleParams = blurParamsVert[index];
+                sampleParams = _blurParamsVert[index];
 
             //Pass parameters to shader
             weightsParameter.SetValue(sampleParams.Item1);
             offsetsParameter.SetValue(sampleParams.Item2);
+        }
+
+        public float BlurIntensity
+        {
+            get { return _blurIntensity; }
+            set { _blurIntensity = value; }
+        }
+
+        public int BlurCount
+        {
+            get { return _blurCount; }
+            set { _blurCount = value; }
+        }
+
+        public int BlurFrameCount
+        {
+            get { return _blurFrameCount; }
+            set { _blurFrameCount = value; }
+        }
+
+        public int BlurWaitLength
+        {
+            get { return _blurWaitLength; }
+            set { _blurWaitLength = value; }
         }
     }
 }

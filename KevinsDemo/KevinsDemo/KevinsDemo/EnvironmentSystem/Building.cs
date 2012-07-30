@@ -16,17 +16,33 @@ namespace KevinsDemo.EnvironmentSystem
 {
     class Building
     {
-        private Body _compound;
-        private Vector2 _origin;
-        private Texture2D _polygonTexture;
-        private Texture2D _drawTexture;
-        private float _scale;
-        private bool flipHorizontal;
+        //The physical body of the building
+        private Body _body;
 
-        public Building(World world, ContentManager content, Vector2 position, float rotation, bool flippedHorizontally, string drawTextureContentItem, string collisionTextureContentItem)
+        public Body Body
         {
-            flipHorizontal = flippedHorizontally;
+            get { return _body; }
+            set { _body = value; }
+        }
 
+        //The polygon texture for collisions
+        private Texture2D _polygonTexture;
+        //The draw texture for rendering
+        private Texture2D _drawTexture;
+
+        //The tint color to draw the sprite
+        private Color _tintColor;
+        //The origin of the building
+        private Vector2 _origin;
+        //The scale of the building
+        private float _scale;
+        //The sprite effects for flipped drawing
+        private SpriteEffects _spriteEffects;
+        //The depth layer for rendering
+        private float _layerDepth;
+
+        public Building(World world, ContentManager content, Vector2 position, string drawTextureContentItem, string collisionTextureContentItem)
+        {
             //load texture that will represent the physics body
             try
             {
@@ -40,7 +56,6 @@ namespace KevinsDemo.EnvironmentSystem
 
             //Create an array to hold the data from the texture
             uint[] data = new uint[_polygonTexture.Width * _polygonTexture.Height];
-
 
             //Transfer the texture data to the array
             _polygonTexture.GetData(data);
@@ -75,18 +90,51 @@ namespace KevinsDemo.EnvironmentSystem
             }
 
             //Create a single body with multiple fixtures
-            _compound = BodyFactory.CreateCompoundPolygon(world, list, 1f, BodyType.Dynamic);
-            _compound.BodyType = BodyType.Static;
-            _compound.CollidesWith = Category.All;
-            _compound.Position = position;
-            _compound.Rotation = rotation;
+            _body = BodyFactory.CreateCompoundPolygon(world, list, 1f, BodyType.Dynamic);
+            _body.BodyType = BodyType.Static;
+            _body.CollidesWith = Category.All;
+            _body.Position = position;
         }
 
         public void Draw(SpriteBatch batch)
         {
-            batch.Draw(_drawTexture, ConvertUnits.ToDisplayUnits(_compound.Position),
-                null, Color.White, _compound.Rotation, _origin, _scale, flipHorizontal ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                                           0f);
+            batch.Draw(_drawTexture, ConvertUnits.ToDisplayUnits(_body.Position), null, _tintColor, _body.Rotation, _origin, _scale, _spriteEffects, _layerDepth);
+        }
+
+        public float Rotation
+        {
+            get { return _body.Rotation; }
+            set { _body.Rotation = value; }
+        }
+
+        public Color TintColor
+        {
+            get { return _tintColor; }
+            set { _tintColor = value; }
+        }
+
+        public Vector2 Origin
+        {
+            get { return _origin; }
+            set { _origin = value; }
+        }
+
+        public float Scale
+        {
+            get { return _scale; }
+            set { _scale = value; }
+        }
+
+        public SpriteEffects SpriteEffects
+        {
+            get { return _spriteEffects; }
+            set { _spriteEffects = value; }
+        }
+
+        public float LayerDepth
+        {
+            get { return _layerDepth; }
+            set { _layerDepth = value; }
         }
     }
 }

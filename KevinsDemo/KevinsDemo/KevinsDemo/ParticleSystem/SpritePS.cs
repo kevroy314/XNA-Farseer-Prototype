@@ -210,7 +210,7 @@ namespace DPSF.ParticleSystems
             y += miScreenOffsetY;
             cParticle.Position = new Vector3(x, y, 0);
             float color = RandomNumber.Between(0.05f, 0.24f);
-            Color c = KevinsHelperFunctions.HSL2RGB(color, RandomNumber.NextFloat(), RandomNumber.NextFloat()/5f+0.3f);
+            Color c = HelperFunctions.HSL2RGB(color, RandomNumber.NextFloat(), RandomNumber.NextFloat()/5f+0.3f);
 			cParticle.Color = c;
 			cParticle.ExternalForce = new Vector3(0, mfGravity, 0);
 			cParticle.Friction = mfGravity;
