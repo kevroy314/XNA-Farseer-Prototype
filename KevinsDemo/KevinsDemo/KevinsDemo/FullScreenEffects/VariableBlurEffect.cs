@@ -8,8 +8,13 @@ using Microsoft.Xna.Framework.Content;
 
 namespace KevinsDemo.FullScreenEffects
 {
+    /// <summary>
+    /// The post process filter for applying a variable blur via the GPU.
+    /// </summary>
     public class VariableBlurEffect
     {
+        #region Variables
+
         //The shader effect object
         private Effect _blurEffect;
 
@@ -29,6 +34,10 @@ namespace KevinsDemo.FullScreenEffects
         private int _blurFrameCount;
         //The amount of time we wait inbetween each pulse
         private int _blurWaitLength;
+
+        #endregion
+
+        #region Constructors
 
         //Constructor taking in the content manager, graphics device, bounds, and blur pulse parameters
         //Beat speed in frames
@@ -74,6 +83,10 @@ namespace KevinsDemo.FullScreenEffects
             _blurWaitLength = beatNumberOfWaitFrames;
         }
 
+        #endregion
+
+        #region Update Function
+
         public float Update(GameTime gameTime)
         {
             //Iterate the blur counter
@@ -85,12 +98,20 @@ namespace KevinsDemo.FullScreenEffects
             return (float)_blurFrameCount/(float)_blurParamsHoriz.Length;
         }
 
+        #endregion
+
+        #region Content Management Functions
+
         public void UnloadContent()
         {
             //Dispose of the render targets
             _blurVerticalRT.Dispose();
             _blurHorizontalRT.Dispose();
         }
+
+        #endregion
+
+        #region Frame Rendering Function
 
         //Render a frame using a Texture2D input
         public RenderTarget2D RenderFrame(GraphicsDevice device, SpriteBatch batch, Texture2D preprocessedFrame, GameTime gameTime)
@@ -135,6 +156,10 @@ namespace KevinsDemo.FullScreenEffects
 
             return _blurVerticalRT;
         }
+
+        #endregion
+
+        #region Internal Blur Function
 
         private float ComputeGaussian(float n)
         {
@@ -234,28 +259,24 @@ namespace KevinsDemo.FullScreenEffects
             offsetsParameter.SetValue(sampleParams.Item2);
         }
 
+        #endregion
+
+        #region Properties
+
+        //The intensity of the blurs
         public float BlurIntensity
         {
             get { return _blurIntensity; }
             set { _blurIntensity = value; }
         }
 
-        public int BlurCount
-        {
-            get { return _blurCount; }
-            set { _blurCount = value; }
-        }
-
-        public int BlurFrameCount
-        {
-            get { return _blurFrameCount; }
-            set { _blurFrameCount = value; }
-        }
-
+        //The amount of time to wait inbetween blurs
         public int BlurWaitLength
         {
             get { return _blurWaitLength; }
             set { _blurWaitLength = value; }
         }
+
+        #endregion
     }
 }

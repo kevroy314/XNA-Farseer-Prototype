@@ -14,16 +14,15 @@ using FarseerPhysics.Common.PolygonManipulation;
 
 namespace KevinsDemo.EnvironmentSystem
 {
+    /// <summary>
+    /// The basic building object for creating single piece buildings.
+    /// </summary>
     class Building
     {
+        #region Variables
+
         //The physical body of the building
         private Body _body;
-
-        public Body Body
-        {
-            get { return _body; }
-            set { _body = value; }
-        }
 
         //The polygon texture for collisions
         private Texture2D _polygonTexture;
@@ -40,6 +39,10 @@ namespace KevinsDemo.EnvironmentSystem
         private SpriteEffects _spriteEffects;
         //The depth layer for rendering
         private float _layerDepth;
+
+        #endregion
+
+        #region Constructors
 
         public Building(World world, ContentManager content, Vector2 position, string drawTextureContentItem, string collisionTextureContentItem)
         {
@@ -94,47 +97,75 @@ namespace KevinsDemo.EnvironmentSystem
             _body.BodyType = BodyType.Static;
             _body.CollidesWith = Category.All;
             _body.Position = position;
+
+            //Set default draw options
+            _tintColor = Color.White;
+            _spriteEffects = Microsoft.Xna.Framework.Graphics.SpriteEffects.None;
+            _layerDepth = 0f;
         }
+
+        #endregion
+
+        #region Drawing Function
 
         public void Draw(SpriteBatch batch)
         {
-            batch.Draw(_drawTexture, ConvertUnits.ToDisplayUnits(_body.Position), null, _tintColor, _body.Rotation, _origin, _scale, _spriteEffects, _layerDepth);
+            batch.Draw(_drawTexture, _body.Position, null, _tintColor, _body.Rotation, _origin, _scale, _spriteEffects, _layerDepth);
         }
 
+        #endregion
+
+        #region Properties
+
+        //The body of the building
+        public Body Body
+        {
+            get { return _body; }
+            set { _body = value; }
+        }
+
+        //The draw rotation of the building
         public float Rotation
         {
             get { return _body.Rotation; }
             set { _body.Rotation = value; }
         }
 
+        //The tint color of the building (default is unchanged/white)
         public Color TintColor
         {
             get { return _tintColor; }
             set { _tintColor = value; }
         }
 
+        //The origin of the sprite for draw rotation
         public Vector2 Origin
         {
             get { return _origin; }
             set { _origin = value; }
         }
 
+        //The drawing scale of the sprite
         public float Scale
         {
             get { return _scale; }
             set { _scale = value; }
         }
 
+        //The flip sprite effects for drawing
         public SpriteEffects SpriteEffects
         {
             get { return _spriteEffects; }
             set { _spriteEffects = value; }
         }
 
+        //The layer depth for drawing
         public float LayerDepth
         {
             get { return _layerDepth; }
             set { _layerDepth = value; }
         }
+
+        #endregion
     }
 }

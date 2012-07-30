@@ -28,7 +28,7 @@ namespace KevinsDemo
 #if WINDOWS || XBOX
             _graphics.PreferredBackBufferWidth = 1280;
             _graphics.PreferredBackBufferHeight = 720;
-            ConvertUnits.SetDisplayUnitToSimUnitRatio(24f);
+            ConvertUnits.SetDisplayUnitToSimUnitRatio(1f);
             IsFixedTimeStep = true;
 #elif WINDOWS_PHONE
             _graphics.PreferredBackBufferWidth = 800;

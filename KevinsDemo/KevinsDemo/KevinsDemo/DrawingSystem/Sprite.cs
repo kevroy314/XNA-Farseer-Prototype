@@ -3,6 +3,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KevinsDemo.DrawingSystem
 {
+    /// <summary>
+    /// The basic sprite object for drawing. It stores an origin (for rotation), Texture2D, and name.
+    /// </summary>
     public class Sprite
     {
         #region Variables

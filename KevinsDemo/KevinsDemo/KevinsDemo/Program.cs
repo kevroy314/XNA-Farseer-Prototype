@@ -7,6 +7,7 @@ namespace KevinsDemo
         /// </summary>
         private static void Main(string[] args)
         {
+            //Create and run the GameMain
             using (GameMain game = new GameMain())
             {
                 game.Run();

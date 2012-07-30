@@ -15,30 +15,58 @@ using FarseerPhysics.Factories;
 
 namespace ParticleObjects
 {
+    /// <summary>
+    /// The basic campfire object to demo particle objects.
+    /// </summary>
     class Campfire
     {
+        #region Variables
+
+        //The texture representing the logs
         private Texture2D _logs;
 
-        // Declare our Particle System variable
+        //The fire particle system
         private FireParticleSystem _particleSystem = null;
 
+        //The parent game (required by particle system)
         private Game _parentGame;
 
+        //The body for the logs (for collisions)
         private Body _body;
 
+        //The origin of the logs (for draw rotation)
         private Vector2 _origin;
+        //The scale of the logs for drawing
+        private Vector2 _scale;
+        //The rotation for drawing
+        private float _rotation;
+        //The flip options for drawing
+        private SpriteEffects _spriteEffects;
+        //The layer depth for drawing
+        private float _layerDepth;
 
-        Vector2 _scale;
+        #endregion
+
+        #region Constructors
 
         public Campfire(Game game, World world, SpriteBatch batch, Vector2 position)
         {
+            //Set the parent game
             _parentGame = game;
-            // TODO: use this.Content to load your game content here
+
+            //Initialize the logs
             _logs = _parentGame.Content.Load<Texture2D>("EnvironmentObjects/logs");
+            //Initialize the scale (we're scaling down the logs when we draw instead of in the original image to show off that capability)
             _scale = new Vector2(0.5f, 0.45f);
+            //No rotation
+            _rotation = 0f;
+            //No sprite effects
+            _spriteEffects = SpriteEffects.None;
+            //Layer depth to front layer
+            _layerDepth = 0f;
+
             //Create an array to hold the data from the texture
             uint[] data = new uint[_logs.Width * _logs.Height];
-
 
             //Transfer the texture data to the array
             _logs.GetData(data);
@@ -80,11 +108,19 @@ namespace ParticleObjects
             _particleSystem.AutoInitialize(_parentGame.GraphicsDevice, _parentGame.Content, batch);
         }
 
+        #endregion
+
+        #region Content Management Functions
+
         public void UnloadContent()
         {
             // Destroy the Particle System
             _particleSystem.Destroy();
         }
+
+        #endregion
+
+        #region Update and Draw Functions
 
         public void Update(GameTime gameTime, Camera2D camera)
         {
@@ -98,22 +134,74 @@ namespace ParticleObjects
 
             // Draw the Particle System
             _particleSystem.SetWorldViewProjectionMatrices(Matrix.Identity, sViewMatrix, sProjectionMatrix);
+            //_particleSystem.SetCameraPosition(new Vector3(camera.Position, 0f));
             _particleSystem.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
         }
 
+        //Draws just the logs
         public void Draw(SpriteBatch batch)
         {
-            batch.Draw(_logs, _body.Position, null, Color.White, 0f, _origin, _scale, SpriteEffects.None, 0);
+            batch.Draw(_logs, _body.Position, null, Color.White, _rotation, _origin, _scale, _spriteEffects, _layerDepth);
         }
 
+        //Draws just the particles
         public void DrawParticles()
         {
             _particleSystem.Draw();
         }
 
+        #endregion
+
+        #region Properties
+
+        //The body of the campfire logs (for collisions)
         public Body Body
         {
             get { return _body; }
         }
+
+        //The particle system for the fire
+        public FireParticleSystem ParticleSystem
+        {
+            get { return _particleSystem; }
+            set { _particleSystem = value; }
+        }
+
+        //The rotation for drawing
+        public float Rotation
+        {
+            get { return _rotation; }
+            set { _rotation = value; }
+        }
+
+        //The flip effects for drawing
+        public SpriteEffects SpriteEffects
+        {
+            get { return _spriteEffects; }
+            set { _spriteEffects = value; }
+        }
+
+        //The layer depth for drawing
+        public float LayerDepth
+        {
+            get { return _layerDepth; }
+            set { _layerDepth = value; }
+        }
+
+        //The origin for rotation
+        public Vector2 Origin
+        {
+            get { return _origin; }
+            set { _origin = value; }
+        }
+
+        //The scale for drawing
+        public Vector2 Scale
+        {
+            get { return _scale; }
+            set { _scale = value; }
+        }
+
+        #endregion
     }
 }

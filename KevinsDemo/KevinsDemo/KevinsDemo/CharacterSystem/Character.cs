@@ -15,12 +15,17 @@ using KevinsDemo.DrawingSystem;
 
 namespace KevinsDemo.CharacterSystem
 {
+    /// <summary>
+    /// This is the basic character class. It manages the sprite animations for it's self,
+    /// and draws and updates according to user input. It also interfaces with the collision
+    /// system and manages the collisions.
+    /// </summary>
     class Character
     {
         #region Variables
 
         //The body for collision calculations
-        private Body _agentBody;
+        private Body _body;
         
         //The bounds of the texture
         private Rectangle _bounds;
@@ -90,26 +95,28 @@ namespace KevinsDemo.CharacterSystem
 
             //Set up the agents body
             //Create dynamic body
-            _agentBody = BodyFactory.CreateCompoundPolygon(world, list, 1f, BodyType.Dynamic);
-            _agentBody.BodyType = BodyType.Dynamic;
+            _body = BodyFactory.CreateCompoundPolygon(world, list, 1f, BodyType.Dynamic);
+            _body.BodyType = BodyType.Dynamic;
             //Collides with everything
-            _agentBody.CollidesWith = Category.All;
+            _body.CollidesWith = Category.All;
             //Do not allow rotation
-            _agentBody.FixedRotation = true;
+            _body.FixedRotation = true;
             //Apply some friction
-            _agentBody.LinearDamping = 10f;
+            _body.LinearDamping = 10f;
             //Offset the initial position from center
-            _agentBody.Position = position;
+            _body.Position = position;
 
             //Speed of the player movement
-            _speed = 0.6f;
+            _speed = 10000f;
 
+            //Simple example of the chrono walking animations
             _spriteAnimations = new SpriteAnimation[4]; //Magic#
-            _spriteAnimations[0] = new SpriteAnimation("towards screen", content.Load<Texture2D>("CharacterSprites/chrono_towardsScreen"), _agentBody.Position, 4, 1, 5f, true);
-            _spriteAnimations[1] = new SpriteAnimation("left", content.Load<Texture2D>("CharacterSprites/chrono_left"), _agentBody.Position, 4, 1, 5f, true);
-            _spriteAnimations[2] = new SpriteAnimation("right", content.Load<Texture2D>("CharacterSprites/chrono_right"), _agentBody.Position, 4, 1, 5f, true);
-            _spriteAnimations[3] = new SpriteAnimation("away from screen", content.Load<Texture2D>("CharacterSprites/chrono_awayFromScreen"), _agentBody.Position, 4, 1, 5f, true);
+            _spriteAnimations[0] = new SpriteAnimation("towards screen", content.Load<Texture2D>("CharacterSprites/chrono_towardsScreen"), _body.Position, 4, 1, 5f, true);
+            _spriteAnimations[1] = new SpriteAnimation("left", content.Load<Texture2D>("CharacterSprites/chrono_left"), _body.Position, 4, 1, 5f, true);
+            _spriteAnimations[2] = new SpriteAnimation("right", content.Load<Texture2D>("CharacterSprites/chrono_right"), _body.Position, 4, 1, 5f, true);
+            _spriteAnimations[3] = new SpriteAnimation("away from screen", content.Load<Texture2D>("CharacterSprites/chrono_awayFromScreen"), _body.Position, 4, 1, 5f, true);
 
+            //Start facing towards the screen
             _currentDrawSpriteIndex = 0;
         }
 
@@ -120,71 +127,82 @@ namespace KevinsDemo.CharacterSystem
         public void Draw(SpriteBatch batch)
         {
             //Draw the texture at its current position
-            _spriteAnimations[_currentDrawSpriteIndex].Draw(batch,ConvertUnits.ToDisplayUnits(_agentBody.Position));
+            _spriteAnimations[_currentDrawSpriteIndex].Draw(batch, ConvertUnits.ToDisplayUnits(_body.Position));
         }
 
         public void Update(GameTime gameTime)
         {
-            for (int i = 0; i < _spriteAnimations.Length; i++)
-                _spriteAnimations[i].Update(gameTime);
+            //Update the current sprite being drawn
+            _spriteAnimations[_currentDrawSpriteIndex].Update(gameTime);
         }
 
         public void HandleInput(InputHelper input, GameTime gameTime)
         {
+            //Create flags for each movement
             bool up = false;
             bool down = false;
             bool left = false;
             bool right = false;
             if (input.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.W)||input.GamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickUp))
             {
+                //If we press up, apply a linear impulse up (do not change position as it will not map collisions)
                 up = true;
-                _agentBody.ApplyLinearImpulse(new Vector2(0.0f, -_speed));
+                _body.ApplyLinearImpulse(new Vector2(0.0f, -_speed));
             }
             if (input.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.S) || input.GamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickDown))
             {
+                //If we press down, apply a linear impulse down (do not change position as it will not map collisions)
                 down = true;
-                _agentBody.ApplyLinearImpulse(new Vector2(0.0f, _speed));
+                _body.ApplyLinearImpulse(new Vector2(0.0f, _speed));
             }
             if (input.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.A) || input.GamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickLeft))
             {
+                //If we press left, apply a linear impulse left (do not change position as it will not map collisions)
                 left = true;
-                _agentBody.ApplyLinearImpulse(new Vector2(-_speed, 0.0f));
+                _body.ApplyLinearImpulse(new Vector2(-_speed, 0.0f));
             }
             if (input.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.D) || input.GamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickRight))
             {
+                //If we press right, apply a linear impulse right (do not change position as it will not map collisions)
                 right = true;
-                _agentBody.ApplyLinearImpulse(new Vector2(_speed, 0.0f));
+                _body.ApplyLinearImpulse(new Vector2(_speed, 0.0f));
             }
 
+            //Given the buttons that were pressed, we save the old sprite animation index
             int oldDrawSpriteIndex = _currentDrawSpriteIndex;
 
-            if (left)
+            if (left) //If we pressed left, it takes priority
             {
                 _currentDrawSpriteIndex = 1;
+                //If we pressed something and we were stopped, start the animation again
                 if(_spriteAnimations[_currentDrawSpriteIndex].AnimationState == SpriteAnimationState.Stopped)
                     _spriteAnimations[_currentDrawSpriteIndex].Play();
             }
-            else if (right)
+            else if (right) //If we pressed right, it takes priority above up and down
             {
                 _currentDrawSpriteIndex = 2;
+                //If we pressed something and we were stopped, start the animation again
                 if (_spriteAnimations[_currentDrawSpriteIndex].AnimationState == SpriteAnimationState.Stopped)
                     _spriteAnimations[_currentDrawSpriteIndex].Play();
             }
-            else if (up)
+            else if (up) //If we pressed up it takes priority over down
             {
                 _currentDrawSpriteIndex = 3;
+                //If we pressed something and we were stopped, start the animation again
                 if (_spriteAnimations[_currentDrawSpriteIndex].AnimationState == SpriteAnimationState.Stopped)
                     _spriteAnimations[_currentDrawSpriteIndex].Play();
             }
-            else if (down)
+            else if (down) //If we pressed down, do down animation
             {
                 _currentDrawSpriteIndex = 0;
+                //If we pressed something and we were stopped, start the animation again
                 if (_spriteAnimations[_currentDrawSpriteIndex].AnimationState == SpriteAnimationState.Stopped)
                     _spriteAnimations[_currentDrawSpriteIndex].Play();
             }
-            else
+            else //If nothing was pressed, stop the current animation
                 _spriteAnimations[_currentDrawSpriteIndex].Stop();
 
+            //If something new was pressed, make sure to restart the animation
             if (oldDrawSpriteIndex != _currentDrawSpriteIndex)
                 _spriteAnimations[_currentDrawSpriteIndex].Play();
         }
@@ -193,29 +211,34 @@ namespace KevinsDemo.CharacterSystem
 
         #region Properties
 
+        //The body for the character
         public Body Body
         {
-            get { return _agentBody; }
+            get { return _body; }
         }
 
+        //The bounds for the character texture
         public Rectangle Bounds
         {
             get { return _bounds; }
         }
 
+        //The origin for the character (for rotation)
         public Vector2 Origin
         {
             get { return _origin; }
             set { _origin = value; }
         }
 
+        //The scale of the character to be drawn
         public float Scale
         {
             get { return _scale; }
             set { _scale = value; }
         }
 
-        public float Speed
+        //The walking speed of the character
+        public float WalkSpeed
         {
             get { return _speed; }
             set { _speed = value; }

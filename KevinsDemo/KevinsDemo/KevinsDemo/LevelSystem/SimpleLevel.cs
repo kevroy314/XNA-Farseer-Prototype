@@ -78,7 +78,7 @@ namespace KevinsDemo.LevelSystem
         public override void LoadContent()
         {
             base.LoadContent();
-
+            
             //Initialize the render targets to the viewport size
             _RT = new RenderTarget2D(ScreenManager.GraphicsDevice, ScreenManager.GraphicsDevice.Viewport.Bounds.Width, ScreenManager.GraphicsDevice.Viewport.Bounds.Height, false, ScreenManager.GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.None);
             _blurredRT = new RenderTarget2D(ScreenManager.GraphicsDevice, ScreenManager.GraphicsDevice.Viewport.Bounds.Width, ScreenManager.GraphicsDevice.Viewport.Bounds.Height, false, ScreenManager.GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.None);
@@ -92,7 +92,7 @@ namespace KevinsDemo.LevelSystem
             {
                 float cos = (float)Math.Cos(((float)i / (float)_buildings.Length) * Math.PI * 2);
                 float sin = (float)Math.Sin(((float)i / (float)_buildings.Length) * Math.PI * 2);
-                float r = 13f;
+                float r = 500f;
                 float xpos = cos * r;
                 float ypos = sin * r;
                 _buildings[i] = new Building(World, ScreenManager.Content, new Vector2(xpos, ypos), "EnvironmentObjects/Tents/" + buildingTypes[i], "EnvironmentObjects/Tents/" + buildingTypes[i]+"_collisions");
@@ -101,12 +101,8 @@ namespace KevinsDemo.LevelSystem
             _fire = new Campfire(_parentGame, World, ScreenManager.SpriteBatch, Vector2.Zero);
             
             //Create the character
-            _pc = new Character(World, ScreenManager.Content,Camera.ConvertScreenToWorld(new Vector2(ScreenManager.GraphicsDevice.Viewport.Bounds.Center.X,ScreenManager.GraphicsDevice.Viewport.Bounds.Center.Y + 50f)));
+            _pc = new Character(World, ScreenManager.Content, Vector2.Zero);
             _enemy = new SimpleTestEnemy(_parentGame, ScreenManager.Content, Camera.ConvertWorldToScreen(new Vector2(10f, 10f)), 1500);
-            //_spriteParticles = new SpriteParticleSystem(_parentGame, new Vector3(ScreenManager.GraphicsDevice.Viewport.Bounds.Center.X, ScreenManager.GraphicsDevice.Viewport.Bounds.Center.Y+50, 0f),_pc.Bounds);
-            //_spriteParticles.AutoInitialize(_parentGame.GraphicsDevice, _parentGame.Content, ScreenManager.SpriteBatch);
-            //_spriteParticles.AttractorMode = SpriteParticleSystem.EAttractorModes.Attract;
-            //_spriteParticles.AttractorPosition = new Vector3(_pc.Body.Position, 0f);
 
             //Create the blur effect (make it slow so it's not distracting)
             _blur = new VariableBlurEffect(ScreenManager.Content, ScreenManager.GraphicsDevice, ScreenManager.GraphicsDevice.Viewport.Bounds, 30, 300, 6);
@@ -158,8 +154,10 @@ namespace KevinsDemo.LevelSystem
             ScreenManager.SpriteBatch.End();
 
             base.Draw(gameTime);
+            ScreenManager.SpriteBatch.Begin(SpriteSortMode.Deferred,null,null,null,null,null,Camera.View);
+            ScreenManager.SpriteBatch.DrawString(ScreenManager.Fonts.DetailsFont, "(" + mouseX + ", " + mouseY + ")", new Vector2(mouseX, mouseY), Color.White);
+            ScreenManager.SpriteBatch.End();
         }
-
         public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
         {
             _pc.Update(gameTime);
@@ -171,9 +169,12 @@ namespace KevinsDemo.LevelSystem
             _enemy.Update(gameTime, Camera);
             base.Update(gameTime, otherScreenHasFocus, coveredByOtherScreen);
         }
-
+        private int mouseX, mouseY;
         public override void HandleInput(InputHelper input, GameTime gameTime)
         {
+            Vector2 loc = Camera.ConvertScreenToWorld(new Vector2(input.MouseState.X, input.MouseState.Y));
+            mouseX = (int)loc.X;
+            mouseY = (int)loc.Y;
             _pc.HandleInput(input, gameTime);
             base.HandleInput(input, gameTime);
         }

@@ -8,6 +8,8 @@ namespace KevinsDemo
 {
     public class HelperFunctions
     {
+        #region Color Functions
+
         public static Color HSL2RGB(double h, double sl, double l)
         {
             double v;
@@ -73,5 +75,7 @@ namespace KevinsDemo
             rgb.A = 255;
             return rgb;
         }
+
+        #endregion
     }
 }
