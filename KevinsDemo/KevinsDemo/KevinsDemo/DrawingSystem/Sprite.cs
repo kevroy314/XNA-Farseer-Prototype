@@ -3,21 +3,57 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace KevinsDemo.DrawingSystem
 {
-    public struct Sprite
+    public class Sprite
     {
-        public Vector2 Origin;
-        public Texture2D Texture;
+        #region Variables
 
-        public Sprite(Texture2D texture, Vector2 origin)
+        //The name of the sprite
+        protected string _name;
+        //The texture to be drawn
+        protected Texture2D _texture;
+        //The origin of the sprite (for rotation)
+        protected Vector2 _origin;
+
+        #endregion
+
+        #region Constructors
+
+        public Sprite(string name, Texture2D texture, Vector2 origin)
         {
-            this.Texture = texture;
-            this.Origin = origin;
+            _name = name;
+            _texture = texture;
+            _origin = origin;
         }
 
-        public Sprite(Texture2D sprite)
+        public Sprite(string name, Texture2D texture)
         {
-            Texture = sprite;
-            Origin = new Vector2(sprite.Width / 2f, sprite.Height / 2f);
+            _name = name;
+            _texture = texture;
+            _origin = new Vector2(texture.Width / 2f, texture.Height / 2f);
         }
+
+        #endregion
+
+        #region Properties
+
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; }
+        }
+
+        public Texture2D Texture
+        {
+            get { return _texture; }
+            set { _texture = value; }
+        }
+
+        public Vector2 Origin
+        {
+            get { return _origin; }
+            set { _origin = value; }
+        }
+
+        #endregion
     }
 }

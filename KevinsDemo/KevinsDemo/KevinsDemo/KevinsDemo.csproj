@@ -16,8 +16,8 @@
     <XnaProfile>Reach</XnaProfile>
     <XnaCrossPlatformGroupID>cea5807e-8a0d-458d-9edc-4e786589e6da</XnaCrossPlatformGroupID>
     <XnaOutputType>Game</XnaOutputType>
-    <ApplicationIcon>Game.ico</ApplicationIcon>
-    <Thumbnail>GameThumbnail.png</Thumbnail>
+    <ApplicationIcon>Icons\Game.ico</ApplicationIcon>
+    <Thumbnail>Icons\GameThumbnail.png</Thumbnail>
     <SccProjectName>
     </SccProjectName>
     <SccLocalPath>
@@ -119,18 +119,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AudioSystem\MusicManager.cs" />
+    <Compile Include="DrawingSystem\SpriteAnimation.cs" />
     <Compile Include="FullScreenEffects\VariableBlurEffect.cs" />
     <Compile Include="GlobalGameOptions.cs" />
-    <Compile Include="KevinsHelperFunctions.cs" />
+    <Compile Include="Utilities\HelperFunctions.cs" />
     <Compile Include="NPCs\Enemies\SimpleTestEnemy.cs" />
-    <Compile Include="ParticleObjects\Campfire.cs" />
+    <Compile Include="EnvironmentSystem\ParticleObjects\Campfire.cs" />
     <Compile Include="ParticleSystem\Templates\DefaultQuadParticleSystemTemplate.cs" />
     <Compile Include="ParticleSystem\Templates\DefaultSprite3DBillboardParticleSystemTemplate.cs" />
     <Compile Include="ParticleSystem\Templates\DefaultSpriteParticleSystemTemplate.cs" />
     <Compile Include="ParticleSystem\Templates\DefaultTexturedQuadParticleSystemTemplate.cs" />
     <Compile Include="EnvironmentSystem\Building.cs" />
     <Compile Include="CharacterSystem\Character.cs" />
-    <Compile Include="DrawingSystem\LineBatch.cs" />
     <Compile Include="ParticleSystem\FirePS.cs" />
     <Compile Include="LevelSystem\SimpleLevel.cs" />
     <Compile Include="ParticleSystem\Templates\QuadParticleSystemTemplate.cs" />
@@ -143,16 +144,7 @@
     <Compile Include="ParticleSystem\Templates\TexturedQuadParticleSystemTemplate.cs" />
     <Compile Include="ParticleSystem\TrailPS.cs" />
     <Compile Include="ScreenSystem\FramerateCounterComponent.cs" />
-    <Compile Include="DrawingSystem\AssetCreator.cs" />
     <Compile Include="DrawingSystem\Sprite.cs" />
-    <Compile Include="Prefabs\Agent.cs" />
-    <Compile Include="Prefabs\Border.cs" />
-    <Compile Include="Prefabs\Objects.cs" />
-    <Compile Include="Prefabs\Pyramid.cs" />
-    <Compile Include="Prefabs\Ragdoll.cs" />
-    <Compile Include="Prefabs\Spider.cs" />
-    <Compile Include="Prefabs\Spiderweb.cs" />
-    <Compile Include="Prefabs\TheoJansen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="GameMain.cs" />
@@ -172,14 +164,12 @@
     <Compile Include="ScreenSystem\MenuEntry.cs" />
     <Compile Include="ScreenSystem\MenuScreen.cs" />
     <Compile Include="ScreenSystem\MessageBoxScreen.cs" />
-    <Compile Include="ScreenSystem\VirtualButton.cs" />
-    <Compile Include="ScreenSystem\VirtualStick.cs" />
-    <Compile Include="SoundEffectsManager.cs" />
+    <Compile Include="AudioSystem\SoundEffectsManager.cs" />
     <Compile Include="UIElements\Slider.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Game.ico" />
-    <Content Include="GameThumbnail.png" />
+    <Content Include="Icons\Game.ico" />
+    <Content Include="Icons\GameThumbnail.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Farseer Physics Engine 3.3 XNA\Farseer Physics XNA.csproj">

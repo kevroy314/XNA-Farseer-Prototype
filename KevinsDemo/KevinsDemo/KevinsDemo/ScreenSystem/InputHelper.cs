@@ -146,7 +146,7 @@ namespace KevinsDemo.ScreenSystem
 
         public void LoadContent()
         {
-            _cursorSprite = new Sprite(_manager.Content.Load<Texture2D>("Common/cursor"));
+            _cursorSprite = new Sprite("cursor sprite", _manager.Content.Load<Texture2D>("Common/cursor"));
 #if WINDOWS_PHONE
             // virtual stick content
             _phoneStick = new VirtualStick(_manager.Content.Load<Texture2D>("Common/socket"),

@@ -11,37 +11,41 @@ using FarseerPhysics.Common;
 using FarseerPhysics.Common.PolygonManipulation;
 using FarseerPhysics.Common.Decomposition;
 using FarseerPhysics.Factories;
+using KevinsDemo.DrawingSystem;
 
 namespace KevinsDemo.CharacterSystem
 {
     class Character
     {
+        #region Variables
+
         //The body for collision calculations
         private Body _agentBody;
-
+        
+        //The bounds of the texture
         private Rectangle _bounds;
 
         //The texture for drawing
         private Texture2D _agentTextures;
         //The texture for determining the collision polygon
         private Texture2D _agentCollisionTextures;
+
         //The origin of the body
         private Vector2 _origin;
         //The scale of the body
         private float _scale;
         //The speed of the users motion
         private float _speed;
-        //Locations in the overall texture of unique character sprites
-        private Rectangle[,] _characterSpriteLocations;
-        //The index of the current character sprite
-        private int _currentCharacterSpriteX;
-        private int _currentCharacterSpriteY;
-        //Sprite sizes
-        private int _numSpritesWidth = 4;
-        private int _numSpritesHeight = 4;
-        //Variables for slowing down the sprite animation
-        private int _spriteTransitionDelay;
-        private float _spriteTransitionCounter;
+
+        //Sprite animations for each direction
+        private SpriteAnimation[] _spriteAnimations;
+
+        //The current animation index
+        private int _currentDrawSpriteIndex;
+
+        #endregion
+
+        #region Constructor
 
         public Character(World world, ContentManager content, Vector2 position)
         {
@@ -100,29 +104,29 @@ namespace KevinsDemo.CharacterSystem
             //Speed of the player movement
             _speed = 0.6f;
 
-            _characterSpriteLocations = new Rectangle[_numSpritesWidth, _numSpritesHeight];
+            _spriteAnimations = new SpriteAnimation[4]; //Magic#
+            _spriteAnimations[0] = new SpriteAnimation("towards screen", content.Load<Texture2D>("CharacterSprites/chrono_towardsScreen"), _agentBody.Position, 4, 1, 5f, true);
+            _spriteAnimations[1] = new SpriteAnimation("left", content.Load<Texture2D>("CharacterSprites/chrono_left"), _agentBody.Position, 4, 1, 5f, true);
+            _spriteAnimations[2] = new SpriteAnimation("right", content.Load<Texture2D>("CharacterSprites/chrono_right"), _agentBody.Position, 4, 1, 5f, true);
+            _spriteAnimations[3] = new SpriteAnimation("away from screen", content.Load<Texture2D>("CharacterSprites/chrono_awayFromScreen"), _agentBody.Position, 4, 1, 5f, true);
 
-            for (int y = 0; y < _numSpritesHeight; y++)
-                for (int x = 0; x < _numSpritesWidth; x++)
-                    _characterSpriteLocations[x, y] = new Rectangle(_agentTextures.Bounds.Width / _numSpritesWidth * x, _agentTextures.Bounds.Height / _numSpritesHeight * y + 1, _agentTextures.Bounds.Width / _numSpritesWidth, _agentTextures.Bounds.Height / _numSpritesHeight);
-
-            _currentCharacterSpriteX = 0;
-            _currentCharacterSpriteY = 0;
-
-            _spriteTransitionDelay = (int)(_speed * _numSpritesWidth * 4f);
-            _spriteTransitionCounter = 0;
+            _currentDrawSpriteIndex = 0;
         }
+
+        #endregion
+
+        #region Draw, Update and Input
 
         public void Draw(SpriteBatch batch)
         {
             //Draw the texture at its current position
-            batch.Draw(_agentTextures, ConvertUnits.ToDisplayUnits(_agentBody.Position),
-                                           _characterSpriteLocations[_currentCharacterSpriteX, _currentCharacterSpriteY], Color.White, _agentBody.Rotation, _origin, _scale, SpriteEffects.None,
-                                           0f);
+            _spriteAnimations[_currentDrawSpriteIndex].Draw(batch,ConvertUnits.ToDisplayUnits(_agentBody.Position));
         }
 
         public void Update(GameTime gameTime)
         {
+            for (int i = 0; i < _spriteAnimations.Length; i++)
+                _spriteAnimations[i].Update(gameTime);
         }
 
         public void HandleInput(InputHelper input, GameTime gameTime)
@@ -151,40 +155,43 @@ namespace KevinsDemo.CharacterSystem
                 right = true;
                 _agentBody.ApplyLinearImpulse(new Vector2(_speed, 0.0f));
             }
+
+            int oldDrawSpriteIndex = _currentDrawSpriteIndex;
+
             if (left)
             {
-                _currentCharacterSpriteY = 1;
-                _spriteTransitionCounter = (_spriteTransitionCounter + 1f) % _spriteTransitionDelay;
-                if (_spriteTransitionCounter == 0)
-                    _currentCharacterSpriteX = (_currentCharacterSpriteX + 1) % _numSpritesWidth;
+                _currentDrawSpriteIndex = 1;
+                if(_spriteAnimations[_currentDrawSpriteIndex].AnimationState == SpriteAnimationState.Stopped)
+                    _spriteAnimations[_currentDrawSpriteIndex].Play();
             }
             else if (right)
             {
-                _currentCharacterSpriteY = 2;
-                _spriteTransitionCounter = (_spriteTransitionCounter + 1f) % _spriteTransitionDelay;
-                if (_spriteTransitionCounter == 0)
-                    _currentCharacterSpriteX = (_currentCharacterSpriteX + 1) % _numSpritesWidth;
+                _currentDrawSpriteIndex = 2;
+                if (_spriteAnimations[_currentDrawSpriteIndex].AnimationState == SpriteAnimationState.Stopped)
+                    _spriteAnimations[_currentDrawSpriteIndex].Play();
             }
             else if (up)
             {
-                _currentCharacterSpriteY = 3;
-                _spriteTransitionCounter = (_spriteTransitionCounter + 1f) % _spriteTransitionDelay;
-                if (_spriteTransitionCounter == 0)
-                    _currentCharacterSpriteX = (_currentCharacterSpriteX + 1) % _numSpritesWidth;
+                _currentDrawSpriteIndex = 3;
+                if (_spriteAnimations[_currentDrawSpriteIndex].AnimationState == SpriteAnimationState.Stopped)
+                    _spriteAnimations[_currentDrawSpriteIndex].Play();
             }
             else if (down)
             {
-                _currentCharacterSpriteY = 0;
-                _spriteTransitionCounter = (_spriteTransitionCounter + 1f) % _spriteTransitionDelay;
-                if (_spriteTransitionCounter == 0)
-                    _currentCharacterSpriteX = (_currentCharacterSpriteX + 1) % _numSpritesWidth;
+                _currentDrawSpriteIndex = 0;
+                if (_spriteAnimations[_currentDrawSpriteIndex].AnimationState == SpriteAnimationState.Stopped)
+                    _spriteAnimations[_currentDrawSpriteIndex].Play();
             }
             else
-            {
-                _spriteTransitionCounter = 0;
-                _currentCharacterSpriteX = 0;
-            }
+                _spriteAnimations[_currentDrawSpriteIndex].Stop();
+
+            if (oldDrawSpriteIndex != _currentDrawSpriteIndex)
+                _spriteAnimations[_currentDrawSpriteIndex].Play();
         }
+
+        #endregion
+
+        #region Properties
 
         public Body Body
         {
@@ -195,5 +202,25 @@ namespace KevinsDemo.CharacterSystem
         {
             get { return _bounds; }
         }
+
+        public Vector2 Origin
+        {
+            get { return _origin; }
+            set { _origin = value; }
+        }
+
+        public float Scale
+        {
+            get { return _scale; }
+            set { _scale = value; }
+        }
+
+        public float Speed
+        {
+            get { return _speed; }
+            set { _speed = value; }
+        }
+
+        #endregion
     }
 }
