@@ -111,10 +111,10 @@ namespace KevinsDemo.CharacterSystem
 
             //Simple example of the chrono walking animations
             _spriteAnimations = new SpriteAnimation[4]; //Magic#
-            _spriteAnimations[0] = new SpriteAnimation("towards screen", content.Load<Texture2D>("CharacterSprites/chrono_towardsScreen"), _body.Position, 4, 1, 5f, true);
-            _spriteAnimations[1] = new SpriteAnimation("left", content.Load<Texture2D>("CharacterSprites/chrono_left"), _body.Position, 4, 1, 5f, true);
-            _spriteAnimations[2] = new SpriteAnimation("right", content.Load<Texture2D>("CharacterSprites/chrono_right"), _body.Position, 4, 1, 5f, true);
-            _spriteAnimations[3] = new SpriteAnimation("away from screen", content.Load<Texture2D>("CharacterSprites/chrono_awayFromScreen"), _body.Position, 4, 1, 5f, true);
+            _spriteAnimations[0] = new SpriteAnimation("towards screen", content.Load<Texture2D>("CharacterSprites/chrono_towardsScreen"), _origin, 4, 1, 5f, true);
+            _spriteAnimations[1] = new SpriteAnimation("left", content.Load<Texture2D>("CharacterSprites/chrono_left"), _origin, 4, 1, 5f, true);
+            _spriteAnimations[2] = new SpriteAnimation("right", content.Load<Texture2D>("CharacterSprites/chrono_right"), _origin, 4, 1, 5f, true);
+            _spriteAnimations[3] = new SpriteAnimation("away from screen", content.Load<Texture2D>("CharacterSprites/chrono_awayFromScreen"), _origin, 4, 1, 5f, true);
 
             //Start facing towards the screen
             _currentDrawSpriteIndex = 0;
@@ -127,7 +127,7 @@ namespace KevinsDemo.CharacterSystem
         public void Draw(SpriteBatch batch)
         {
             //Draw the texture at its current position
-            _spriteAnimations[_currentDrawSpriteIndex].Draw(batch, ConvertUnits.ToDisplayUnits(_body.Position));
+            _spriteAnimations[_currentDrawSpriteIndex].Draw(batch, _body.Position);
         }
 
         public void Update(GameTime gameTime)

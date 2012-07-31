@@ -97,7 +97,7 @@ namespace DPSF.ParticleSystems
 
             ParticleSystemEvents.AddEveryTimeEvent(UpdateParticleSystemDynamicallyUpdateParticlesEmittedBasedOnSpeed);
 
-            Emitter.PositionData.Position = new Vector3(0, 50, 0);
+            Emitter.PositionData.Position = new Vector3(0, 0, 0);
             Emitter.OrientationData.RotationalVelocity = new Vector3(0, 0, (float)Math.PI);
             Emitter.ParticlesPerSecond = 100;
 

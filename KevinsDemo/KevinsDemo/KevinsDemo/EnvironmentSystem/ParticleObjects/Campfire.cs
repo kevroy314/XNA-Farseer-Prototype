@@ -12,6 +12,7 @@ using FarseerPhysics.Common.PolygonManipulation;
 using FarseerPhysics.Common.Decomposition;
 using KevinsDemo.ScreenSystem;
 using FarseerPhysics.Factories;
+using KevinsDemo;
 
 namespace ParticleObjects
 {
@@ -125,16 +126,15 @@ namespace ParticleObjects
         public void Update(GameTime gameTime, Camera2D camera)
         {
             // Set up the Camera's View matrix
-            Matrix sViewMatrix = Matrix.CreateLookAt(new Vector3(camera.Position.X / 4, -camera.Position.Y / 4, 200f), new Vector3(camera.Position.X / 4, -camera.Position.Y / 4, 0f), Vector3.Up);
+            Vector3 cPos = new Vector3(camera.Position.X / 4, -camera.Position.Y / 4, 200f);
+            Matrix sViewMatrix = Matrix.CreateLookAt(cPos, new Vector3(camera.Position.X / 4, -camera.Position.Y / 4, 0f), Vector3.Up);
 
             // Setup the Camera's Projection matrix by specifying the field of view (1/4 pi), aspect ratio, and the near and far clipping planes
             Matrix sProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, (float)_parentGame.GraphicsDevice.Viewport.Width / (float)_parentGame.GraphicsDevice.Viewport.Height, 1, 10000);
 
-            //sProjectionMatrix = camera.SimProjection;
-
             // Draw the Particle System
             _particleSystem.SetWorldViewProjectionMatrices(Matrix.Identity, sViewMatrix, sProjectionMatrix);
-            //_particleSystem.SetCameraPosition(new Vector3(camera.Position, 0f));
+            _particleSystem.SetCameraPosition(cPos);
             _particleSystem.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
         }
 

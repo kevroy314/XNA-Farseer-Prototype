@@ -38,7 +38,7 @@ namespace DPSF.ParticleSystems
         {
             InitializeSpriteParticleSystem(cGraphicsDevice, cContentManager, 1000, 50000, "Textures/CloudLight");
             LoadSnowEvents();
-            Emitter.ParticlesPerSecond = 300;
+            Emitter.ParticlesPerSecond = 600;
             Name = "Snow";
         }
 
@@ -46,9 +46,9 @@ namespace DPSF.ParticleSystems
         {
             // Position the Snow within 500 units of the emitter
             Vector3 sPosition = Emitter.PositionData.Position;
-            sPosition.Y = 200;
+            sPosition.Y = RandomNumber.Next(-500, 500);
             sPosition.X += RandomNumber.Next(-500, 500);
-            sPosition.Z += RandomNumber.Next(-500, 500);
+            sPosition.Z += RandomNumber.Next(-50, 50);
 
             cParticle.Lifetime = 0.0f;
 

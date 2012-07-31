@@ -140,7 +140,6 @@
     <Compile Include="ParticleSystem\SpherePS.cs" />
     <Compile Include="ParticleSystem\Templates\Sprite3DBillboardParticleSystemTemplate.cs" />
     <Compile Include="ParticleSystem\Templates\SpriteParticleSystemTemplate.cs" />
-    <Compile Include="ParticleSystem\SpritePS.cs" />
     <Compile Include="ParticleSystem\Templates\TexturedQuadParticleSystemTemplate.cs" />
     <Compile Include="ParticleSystem\TrailPS.cs" />
     <Compile Include="ScreenSystem\FramerateCounterComponent.cs" />
