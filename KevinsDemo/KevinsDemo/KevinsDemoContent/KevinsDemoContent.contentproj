@@ -746,23 +746,74 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CharacterSprites\chrono_awayFromScreen.png">
+    <Compile Include="CharacterSprites\Movement\Walking\chrono_awayFromScreen.png">
       <Name>chrono_awayFromScreen</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="CharacterSprites\chrono_left.png">
+    <Compile Include="CharacterSprites\Movement\Walking\chrono_left.png">
       <Name>chrono_left</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="CharacterSprites\chrono_right.png">
+    <Compile Include="CharacterSprites\Movement\Walking\chrono_right.png">
       <Name>chrono_right</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="CharacterSprites\chrono_towardsScreen.png">
+    <Compile Include="CharacterSprites\Movement\Walking\chrono_towardsScreen.png">
       <Name>chrono_towardsScreen</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CharacterSprites\Attacks\SimpleHit\chrono_hitAwayFromScreen.png">
+      <Name>chrono_hitAwayFromScreen</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="CharacterSprites\Attacks\SimpleHit\chrono_hitLeft.png">
+      <Name>chrono_hitLeft</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="CharacterSprites\Attacks\SimpleHit\chrono_hitRight.png">
+      <Name>chrono_hitRight</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="CharacterSprites\Attacks\SimpleHit\chrono_hitTowardsScreen.png">
+      <Name>chrono_hitTowardsScreen</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CharacterSprites\Attacks\SimpleHit\chrono_hitBoxAwayFromScreen.png">
+      <Name>chrono_hitBoxAwayFromScreen</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="CharacterSprites\Attacks\SimpleHit\chrono_hitBoxLeft.png">
+      <Name>chrono_hitBoxLeft</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="CharacterSprites\Attacks\SimpleHit\chrono_hitBoxRight.png">
+      <Name>chrono_hitBoxRight</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="CharacterSprites\Attacks\SimpleHit\chrono_hitBoxTowardsScreen.png">
+      <Name>chrono_hitBoxTowardsScreen</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="EnemySprites\spritesheet.png">
+      <Name>blackHoleEnemy</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

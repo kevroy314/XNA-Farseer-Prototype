@@ -12,6 +12,7 @@ using FarseerPhysics.Common.PolygonManipulation;
 using FarseerPhysics.Common.Decomposition;
 using FarseerPhysics.Factories;
 using KevinsDemo.DrawingSystem;
+using FarseerPhysics.Collision.Shapes;
 
 namespace KevinsDemo.CharacterSystem
 {
@@ -34,11 +35,13 @@ namespace KevinsDemo.CharacterSystem
         private Texture2D _agentTextures;
         //The texture for determining the collision polygon
         private Texture2D _agentCollisionTextures;
+        //The texture for the hit box
+        private Texture2D[] _agentHitBoxTextures;
 
         //The origin of the body
         private Vector2 _origin;
         //The scale of the body
-        private float _scale;
+        private Vector2 _scale;
         //The speed of the users motion
         private float _speed;
 
@@ -55,43 +58,19 @@ namespace KevinsDemo.CharacterSystem
         public Character(World world, ContentManager content, Vector2 position)
         {
             //Load agent and collision textures
-            _agentTextures = content.Load<Texture2D>("CharacterSprites/chrono");
+            //_agentTextures = content.Load<Texture2D>("CharacterSprites/chrono");
             _agentCollisionTextures = content.Load<Texture2D>("CharacterSprites/chrono_collisionBox_Small");
-            _bounds = _agentTextures.Bounds;
-            //Create an array to hold the data from the texture
-            uint[] data = new uint[_agentCollisionTextures.Width * _agentCollisionTextures.Height];
+            //_agentHitBoxTextures = new Texture2D[4];
+            //_agentHitBoxTextures[0] = content.Load<Texture2D>("CharacterSprites/Attacks/SimpleHit/chrono_hitBoxTowardsScreen");
+            //_agentHitBoxTextures[1] = content.Load<Texture2D>("CharacterSprites/Attacks/SimpleHit/chrono_hitBoxLeft");
+            //_agentHitBoxTextures[2] = content.Load<Texture2D>("CharacterSprites/Attacks/SimpleHit/chrono_hitBoxRight");
+            //_agentHitBoxTextures[3] = content.Load<Texture2D>("CharacterSprites/Attacks/SimpleHit/chrono_hitBoxAwayFromScreen");
+            //_bounds = _agentTextures.Bounds;
 
-            //Transfer the texture data to the array
-            _agentCollisionTextures.GetData(data);
+            //Default scale is 1f
+            _scale = new Vector2(1f, 1f);
 
-            //Find the vertices that makes up the outline of the shape in the texture
-            Vertices textureVertices = PolygonTools.CreatePolygon(data, _agentCollisionTextures.Width, false);
-
-            //The tool return vertices as they were found in the texture.
-            //We need to find the real center (centroid) of the vertices for 2 reasons:
-
-            //1. To translate the vertices so the polygon is centered around the centroid.
-            Vector2 centroid = -textureVertices.GetCentroid();
-            textureVertices.Translate(ref centroid);
-
-            //2. To draw the texture the correct place.
-            _origin = -centroid;
-
-            //We simplify the vertices found in the texture.
-            textureVertices = SimplifyTools.ReduceByDistance(textureVertices, 4f);
-
-            //Since it is a concave polygon, we need to partition it into several smaller convex polygons
-            List<Vertices> list = BayazitDecomposer.ConvexPartition(textureVertices);
-
-            //Adjust the scale of the object
-            _scale = 1f;
-
-            //Scale the vertices from graphics space to sim space
-            Vector2 vertScale = new Vector2(ConvertUnits.ToSimUnits(1)) * _scale;
-            foreach (Vertices vertices in list)
-            {
-                vertices.Scale(ref vertScale);
-            }
+            List<Vertices> list = HelperFunctions.GetVerticiesListFromTexture(_agentCollisionTextures, _scale, ref _origin);
 
             //Set up the agents body
             //Create dynamic body
@@ -108,13 +87,28 @@ namespace KevinsDemo.CharacterSystem
 
             //Speed of the player movement
             _speed = 10000f;
+            //Vector2 dummyOrigin = new Vector2();
+            //PolygonShape[] hitboxes = new PolygonShape[4];
+            //hitboxes[0] = new PolygonShape(HelperFunctions.GetConvexHullFromTexture(_agentHitBoxTextures[0], _scale, ref dummyOrigin), 1f);
+            //hitboxes[1] = new PolygonShape(HelperFunctions.GetConvexHullFromTexture(_agentHitBoxTextures[1], _scale, ref dummyOrigin), 1f);
+            //hitboxes[2] = new PolygonShape(HelperFunctions.GetConvexHullFromTexture(_agentHitBoxTextures[2], _scale, ref dummyOrigin), 1f);
+            //hitboxes[3] = new PolygonShape(HelperFunctions.GetConvexHullFromTexture(_agentHitBoxTextures[3], _scale, ref dummyOrigin), 1f);
 
+            //_body.CreateFixture(hitboxes[0]);
+            //_body.CreateFixture(hitboxes[1]);
+            //_body.CreateFixture(hitboxes[2]);
+            //_body.CreateFixture(hitboxes[3]);
+            
             //Simple example of the chrono walking animations
-            _spriteAnimations = new SpriteAnimation[4]; //Magic#
-            _spriteAnimations[0] = new SpriteAnimation("towards screen", content.Load<Texture2D>("CharacterSprites/chrono_towardsScreen"), _origin, 4, 1, 5f, true);
-            _spriteAnimations[1] = new SpriteAnimation("left", content.Load<Texture2D>("CharacterSprites/chrono_left"), _origin, 4, 1, 5f, true);
-            _spriteAnimations[2] = new SpriteAnimation("right", content.Load<Texture2D>("CharacterSprites/chrono_right"), _origin, 4, 1, 5f, true);
-            _spriteAnimations[3] = new SpriteAnimation("away from screen", content.Load<Texture2D>("CharacterSprites/chrono_awayFromScreen"), _origin, 4, 1, 5f, true);
+            _spriteAnimations = new SpriteAnimation[8]; //Magic#
+            _spriteAnimations[0] = new SpriteAnimation("towards screen", content.Load<Texture2D>("CharacterSprites/Movement/Walking/chrono_towardsScreen"), _origin, 4, 1, 5f, true);
+            _spriteAnimations[1] = new SpriteAnimation("left", content.Load<Texture2D>("CharacterSprites/Movement/Walking/chrono_left"), _origin, 4, 1, 5f, true);
+            _spriteAnimations[2] = new SpriteAnimation("right", content.Load<Texture2D>("CharacterSprites/Movement/Walking/chrono_right"), _origin, 4, 1, 5f, true);
+            _spriteAnimations[3] = new SpriteAnimation("away from screen", content.Load<Texture2D>("CharacterSprites/Movement/Walking/chrono_awayFromScreen"), _origin, 4, 1, 5f, true);
+            _spriteAnimations[4] = new SpriteAnimation("hit towards screen", content.Load<Texture2D>("CharacterSprites/Attacks/SimpleHit/chrono_hitTowardsScreen"), _origin + new Vector2(0f, 20f), 4, 1, 5f, false);
+            _spriteAnimations[5] = new SpriteAnimation("hit left", content.Load<Texture2D>("CharacterSprites/Attacks/SimpleHit/chrono_hitLeft"), _origin + new Vector2(0f, 20f), 4, 1, 5f, false);
+            _spriteAnimations[6] = new SpriteAnimation("hit right", content.Load<Texture2D>("CharacterSprites/Attacks/SimpleHit/chrono_hitRight"), _origin + new Vector2(0f, 20f), 4, 1, 5f, false);
+            _spriteAnimations[7] = new SpriteAnimation("hit away from screen", content.Load<Texture2D>("CharacterSprites/Attacks/SimpleHit/chrono_hitAwayFromScreen"), _origin + new Vector2(0f, 20f), 4, 1, 5f, false);
 
             //Start facing towards the screen
             _currentDrawSpriteIndex = 0;
@@ -143,6 +137,7 @@ namespace KevinsDemo.CharacterSystem
             bool down = false;
             bool left = false;
             bool right = false;
+            bool hit = false;
             if (input.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.W)||input.GamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickUp))
             {
                 //If we press up, apply a linear impulse up (do not change position as it will not map collisions)
@@ -167,40 +162,51 @@ namespace KevinsDemo.CharacterSystem
                 right = true;
                 _body.ApplyLinearImpulse(new Vector2(_speed, 0.0f));
             }
+            if ((input.MouseState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed && input.PreviousMouseState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Released) ||
+                (input.GamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.A) && input.PreviousGamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.A)))
+                hit = true;
 
             //Given the buttons that were pressed, we save the old sprite animation index
             int oldDrawSpriteIndex = _currentDrawSpriteIndex;
 
-            if (left) //If we pressed left, it takes priority
+            if (!(oldDrawSpriteIndex > 3 && _spriteAnimations[oldDrawSpriteIndex].AnimationState == SpriteAnimationState.Running))
             {
-                _currentDrawSpriteIndex = 1;
-                //If we pressed something and we were stopped, start the animation again
-                if(_spriteAnimations[_currentDrawSpriteIndex].AnimationState == SpriteAnimationState.Stopped)
-                    _spriteAnimations[_currentDrawSpriteIndex].Play();
+
+                if (left) //If we pressed left, it takes priority
+                {
+                    _currentDrawSpriteIndex = 1;
+                    //If we pressed something and we were stopped, start the animation again
+                    if (_spriteAnimations[_currentDrawSpriteIndex].AnimationState == SpriteAnimationState.Stopped)
+                        _spriteAnimations[_currentDrawSpriteIndex].Play();
+                }
+                else if (right) //If we pressed right, it takes priority above up and down
+                {
+                    _currentDrawSpriteIndex = 2;
+                    //If we pressed something and we were stopped, start the animation again
+                    if (_spriteAnimations[_currentDrawSpriteIndex].AnimationState == SpriteAnimationState.Stopped)
+                        _spriteAnimations[_currentDrawSpriteIndex].Play();
+                }
+                else if (up) //If we pressed up it takes priority over down
+                {
+                    _currentDrawSpriteIndex = 3;
+                    //If we pressed something and we were stopped, start the animation again
+                    if (_spriteAnimations[_currentDrawSpriteIndex].AnimationState == SpriteAnimationState.Stopped)
+                        _spriteAnimations[_currentDrawSpriteIndex].Play();
+                }
+                else if (down) //If we pressed down, do down animation
+                {
+                    _currentDrawSpriteIndex = 0;
+                    //If we pressed something and we were stopped, start the animation again
+                    if (_spriteAnimations[_currentDrawSpriteIndex].AnimationState == SpriteAnimationState.Stopped)
+                        _spriteAnimations[_currentDrawSpriteIndex].Play();
+                }
+                else //If nothing was pressed, stop the current animation
+                    _spriteAnimations[_currentDrawSpriteIndex].Stop();
             }
-            else if (right) //If we pressed right, it takes priority above up and down
-            {
-                _currentDrawSpriteIndex = 2;
-                //If we pressed something and we were stopped, start the animation again
-                if (_spriteAnimations[_currentDrawSpriteIndex].AnimationState == SpriteAnimationState.Stopped)
-                    _spriteAnimations[_currentDrawSpriteIndex].Play();
-            }
-            else if (up) //If we pressed up it takes priority over down
-            {
-                _currentDrawSpriteIndex = 3;
-                //If we pressed something and we were stopped, start the animation again
-                if (_spriteAnimations[_currentDrawSpriteIndex].AnimationState == SpriteAnimationState.Stopped)
-                    _spriteAnimations[_currentDrawSpriteIndex].Play();
-            }
-            else if (down) //If we pressed down, do down animation
-            {
-                _currentDrawSpriteIndex = 0;
-                //If we pressed something and we were stopped, start the animation again
-                if (_spriteAnimations[_currentDrawSpriteIndex].AnimationState == SpriteAnimationState.Stopped)
-                    _spriteAnimations[_currentDrawSpriteIndex].Play();
-            }
-            else //If nothing was pressed, stop the current animation
-                _spriteAnimations[_currentDrawSpriteIndex].Stop();
+            if (oldDrawSpriteIndex > 3 && _spriteAnimations[oldDrawSpriteIndex].AnimationState == SpriteAnimationState.Stopped && oldDrawSpriteIndex == _currentDrawSpriteIndex)
+                _currentDrawSpriteIndex -= 4;
+            if (hit && _currentDrawSpriteIndex <= 3)
+                _currentDrawSpriteIndex += 4;
 
             //If something new was pressed, make sure to restart the animation
             if (oldDrawSpriteIndex != _currentDrawSpriteIndex)
@@ -231,7 +237,7 @@ namespace KevinsDemo.CharacterSystem
         }
 
         //The scale of the character to be drawn
-        public float Scale
+        public Vector2 Scale
         {
             get { return _scale; }
             set { _scale = value; }

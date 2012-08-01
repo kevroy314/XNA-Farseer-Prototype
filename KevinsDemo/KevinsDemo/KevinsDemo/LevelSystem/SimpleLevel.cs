@@ -48,8 +48,6 @@ namespace KevinsDemo.LevelSystem
 
         private Game _parentGame;
 
-        private SnowParticleSystem _snow;
-
         public SimpleLevel(Game g)
         {
             _parentGame = g;
@@ -103,11 +101,11 @@ namespace KevinsDemo.LevelSystem
             _fire = new Campfire(_parentGame, World, ScreenManager.SpriteBatch, Vector2.Zero);
             
             //Create the character
-            _pc = new Character(World, ScreenManager.Content, Vector2.Zero);
-            _enemy = new SimpleTestEnemy(_parentGame, ScreenManager.Content, Camera.ConvertWorldToScreen(new Vector2(10f, 10f)), 1500);
+            _pc = new Character(World, ScreenManager.Content, new Vector2(0f, 100f));
+            _enemy = new SimpleTestEnemy(_parentGame, ScreenManager.Content, new Vector2(0f, 100f), 1500);
 
             //Create the blur effect (make it slow so it's not distracting)
-            _blur = new VariableBlurEffect(ScreenManager.Content, ScreenManager.GraphicsDevice, ScreenManager.GraphicsDevice.Viewport.Bounds, 30, 300, 6);
+            _blur = new VariableBlurEffect(ScreenManager.Content, ScreenManager.GraphicsDevice, ScreenManager.GraphicsDevice.Viewport.Bounds, 30, 300, 1);
 
             //Make the camera track the character
             Camera.EnableTracking = true;
@@ -116,9 +114,6 @@ namespace KevinsDemo.LevelSystem
 
             //There is no gravity
             World.Gravity = Vector2.Zero;
-
-            _snow = new SnowParticleSystem(_parentGame);
-            _snow.AutoInitialize(ScreenManager.GraphicsDevice, ScreenManager.Content, ScreenManager.SpriteBatch);
 
             MusicManager.InitializeMusicManager();
         }
@@ -151,19 +146,6 @@ namespace KevinsDemo.LevelSystem
             _fire.DrawParticles();
             _enemy.DrawParticles();
 
-
-            // Set up the Camera's View matrix
-            Vector3 cPos = new Vector3(Camera.Position.X / 4, -Camera.Position.Y / 4, 200f);
-            Matrix sViewMatrix = Matrix.CreateLookAt(cPos, new Vector3(Camera.Position.X / 4, -Camera.Position.Y / 4, 0f), Vector3.Up);
-
-            // Setup the Camera's Projection matrix by specifying the field of view (1/4 pi), aspect ratio, and the near and far clipping planes
-            Matrix sProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, (float)_parentGame.GraphicsDevice.Viewport.Width / (float)_parentGame.GraphicsDevice.Viewport.Height, 1, 10000);
-
-            // Draw the Particle System
-            _snow.SetWorldViewProjectionMatrices(Matrix.Identity, sViewMatrix, sProjectionMatrix);
-            _snow.SetCameraPosition(cPos);
-            _snow.Draw();
-
             _blurredRT = _blur.RenderFrame(ScreenManager.GraphicsDevice,ScreenManager.SpriteBatch,_RT,gameTime);
 
             //Set the render target to the screen and draw the blurred frame
@@ -173,10 +155,8 @@ namespace KevinsDemo.LevelSystem
             ScreenManager.SpriteBatch.End();
 
             base.Draw(gameTime);
-            ScreenManager.SpriteBatch.Begin(SpriteSortMode.Deferred,null,null,null,null,null,Camera.View);
-            ScreenManager.SpriteBatch.DrawString(ScreenManager.Fonts.DetailsFont, "(" + mouseX + ", " + mouseY + ")", new Vector2(mouseX, mouseY), Color.White);
-            ScreenManager.SpriteBatch.End();
         }
+
         public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
         {
             _pc.Update(gameTime);
@@ -185,24 +165,12 @@ namespace KevinsDemo.LevelSystem
                 SoundEffectsManager.Play(_heartBeat);
             _fire.Update(gameTime, Camera);
             Vector2 screenPos = Camera.ConvertWorldToScreen(_pc.Body.Position);
-            if(moveEnemy)
-                _enemy.Update(gameTime, Camera);
-            _snow.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
-            _snow.Emitter.PositionData.Position = new Vector3(Camera.Position, 0f);
+            _enemy.Update(gameTime, Camera);
             base.Update(gameTime, otherScreenHasFocus, coveredByOtherScreen);
         }
-        private int mouseX, mouseY;
-        private bool moveEnemy = true;
+
         public override void HandleInput(InputHelper input, GameTime gameTime)
         {
-            if (input.MouseState.MiddleButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
-                moveEnemy = false;
-            else
-                moveEnemy = true;
-            Vector2 loc = Camera.ConvertScreenToWorld(new Vector2(input.MouseState.X, input.MouseState.Y));
-            mouseX = (int)loc.X;
-            mouseY = (int)loc.Y;
-            _enemy.Position = loc;
             _pc.HandleInput(input, gameTime);
             base.HandleInput(input, gameTime);
         }

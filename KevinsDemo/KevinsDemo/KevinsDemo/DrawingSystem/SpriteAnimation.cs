@@ -152,7 +152,10 @@ namespace KevinsDemo.DrawingSystem
             if (_isLooping)
                 _currentFrame %= _frameCount;
             else if (_currentFrame >= _frameCount)
+            {
                 _currentFrame = _frameCount - 1;
+                _state = SpriteAnimationState.Stopped;
+            }
         }
 
         //Check the game time to determine if we should advance to the next frame
