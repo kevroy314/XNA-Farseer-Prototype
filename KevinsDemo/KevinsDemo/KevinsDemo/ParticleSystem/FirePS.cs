@@ -15,7 +15,7 @@ namespace DPSF.ParticleSystems
 #if (WINDOWS)
     [Serializable]
 #endif
-    public class FireParticleSystem : DefaultTexturedQuadParticleSystem
+    class FireParticleSystem : DPSFDefaultSpriteParticleSystem<SpriteParticle, DefaultSpriteParticleVertex>
     {
         /// <summary>
         /// Constructor
@@ -27,7 +27,7 @@ namespace DPSF.ParticleSystems
         //===========================================================
         private bool mbUseAdditiveBlending = false;
         private float mfAmountOfSmokeToRelease = 0f;
-        public SmokeRingParticleSystem mcSmokeParticleSystem = null;
+        private SmokeRingParticleSystem mcSmokeParticleSystem = null;
 
         //===========================================================
         // Overridden Particle System Functions
@@ -64,7 +64,7 @@ namespace DPSF.ParticleSystems
             if (mcSmokeParticleSystem.IsInitialized)
             {
                 // Update the Smoke Particle System manually
-                mcSmokeParticleSystem.CameraPosition = this.CameraPosition;
+                //mcSmokeParticleSystem.CameraPosition = this.CameraPosition;
                 mcSmokeParticleSystem.Update(fElapsedTimeInSeconds);
             }
         }
@@ -87,11 +87,12 @@ namespace DPSF.ParticleSystems
         //===========================================================
         public override void AutoInitialize(GraphicsDevice cGraphicsDevice, ContentManager cContentManager, SpriteBatch cSpriteBatch)
         {
-            InitializeTexturedQuadParticleSystem(cGraphicsDevice, cContentManager, 1000, 50000,
-                                                UpdateVertexProperties, "Textures/Fire");
+            //InitializeTexturedQuadParticleSystem(cGraphicsDevice, cContentManager, 1000, 50000,
+            //                                    UpdateVertexProperties, "Textures/Fire");
+            InitializeSpriteParticleSystem(cGraphicsDevice, cContentManager, 1000, 50000, "Textures/Fire");
             Name = "Fire and Smoke";
             LoadFireRingEvents();
-            Emitter.ParticlesPerSecond = 500;
+            Emitter.ParticlesPerSecond = 100;
             SetAmountOfSmokeToRelease(0.25f);
         }
 
@@ -105,7 +106,6 @@ namespace DPSF.ParticleSystems
             ParticleEvents.AddEveryTimeEvent(UpdateParticleRotationUsingRotationalVelocity);
             ParticleEvents.AddEveryTimeEvent(UpdateParticleTransparencyWithQuickFadeInAndSlowFadeOut, 100);
             ParticleEvents.AddEveryTimeEvent(ReduceSizeBasedOnLifetime);
-            ParticleEvents.AddEveryTimeEvent(UpdateParticleToFaceTheCamera, 200);
             ParticleEvents.AddNormalizedTimedEvent(0.5f, GenerateSmokeParticle);
 
             Emitter.PositionData.Position = new Vector3(0, 0, 0);
@@ -115,8 +115,8 @@ namespace DPSF.ParticleSystems
             InitialProperties.LifetimeMax = 2.0f;
             InitialProperties.PositionMin = Vector3.Zero;
             InitialProperties.PositionMax = Vector3.Zero;
-            InitialProperties.StartSizeMin = 25.0f;
-            InitialProperties.StartSizeMax = 50.0f;
+            InitialProperties.StartSizeMin = 150.0f;
+            InitialProperties.StartSizeMax = 200.0f;
             InitialProperties.EndSizeMin = 4.0f;
             InitialProperties.EndSizeMax = 20.0f;
             InitialProperties.StartColorMin = Color.White;
@@ -124,64 +124,40 @@ namespace DPSF.ParticleSystems
             InitialProperties.EndColorMin = Color.White;
             InitialProperties.EndColorMax = Color.White;
             InitialProperties.InterpolateBetweenMinAndMaxColors = false;
-            InitialProperties.RotationMin = Vector3.Zero;
-            InitialProperties.RotationMax.Z = MathHelper.TwoPi;
-            InitialProperties.VelocityMin = new Vector3(-10, 15, -10);
-            InitialProperties.VelocityMax = new Vector3(10, 30, 10);
+            InitialProperties.RotationMin = 0f;
+            InitialProperties.RotationMax = MathHelper.TwoPi;
+            InitialProperties.VelocityMin = new Vector3(-10, -50, 0);
+            InitialProperties.VelocityMax = new Vector3(10, -100, 0);
             InitialProperties.AccelerationMin = Vector3.Zero;
             InitialProperties.AccelerationMax = Vector3.Zero;
-            InitialProperties.RotationalVelocityMin.Z = -MathHelper.TwoPi;
-            InitialProperties.RotationalVelocityMax.Z = MathHelper.TwoPi;
+            InitialProperties.RotationalVelocityMin = -MathHelper.TwoPi;
+            InitialProperties.RotationalVelocityMax = MathHelper.TwoPi;
 
             mcSmokeParticleSystem.LoadEvents();
         }
 
-        public void InitializeParticleFireOnVerticalRing(DefaultTexturedQuadParticle cParticle)
+        public void InitializeParticleFireOnPoint(SpriteParticle cParticle)
         {
             Quaternion cBackup = Emitter.OrientationData.Orientation;
             Emitter.OrientationData.Orientation = Quaternion.Identity;
             InitializeParticleUsingInitialProperties(cParticle);
             Emitter.OrientationData.Orientation = cBackup;
 
-            cParticle.Position = DPSFHelper.PointOnSphere(MathHelper.PiOver2, RandomNumber.Between(0, MathHelper.TwoPi), 40);
+            cParticle.Position = new Vector3(DPSFHelper.RandomNumberBetween(-50f, 50f), DPSFHelper.RandomNumberBetween(-10f, 10f), 0f);
             cParticle.Position = Vector3.Transform(cParticle.Position, Emitter.OrientationData.Orientation);
             cParticle.Position += Emitter.PositionData.Position;
-        }
-
-        public void InitializeParticleFireOnHorizontalRing(DefaultTexturedQuadParticle cParticle)
-        {
-            Quaternion cBackup = Emitter.OrientationData.Orientation;
-            Emitter.OrientationData.Orientation = Quaternion.Identity;
-            InitializeParticleUsingInitialProperties(cParticle);
-            Emitter.OrientationData.Orientation = cBackup;
-
-            cParticle.Position = DPSFHelper.PointOnSphere(RandomNumber.Between(0, MathHelper.TwoPi), 0, 100);
-            cParticle.Position = Vector3.Transform(cParticle.Position, Emitter.OrientationData.Orientation);
-            cParticle.Position += Emitter.PositionData.Position;
-        }
-
-        public void InitializeParticleFireOnPoint(DefaultTexturedQuadParticle cParticle)
-        {
-            Quaternion cBackup = Emitter.OrientationData.Orientation;
-            Emitter.OrientationData.Orientation = Quaternion.Identity;
-            InitializeParticleUsingInitialProperties(cParticle);
-            Emitter.OrientationData.Orientation = cBackup;
-
-            cParticle.Position = DPSFHelper.PointOnSphere(RandomNumber.Between(-0.8f, 0.8f), 0, 20);
-            cParticle.Position = Vector3.Transform(cParticle.Position, Emitter.OrientationData.Orientation);
-            cParticle.Position += Emitter.PositionData.Position;
-            Emitter.ParticlesPerSecond = 80;
+            Emitter.ParticlesPerSecond = 40;
         }
 
         //===========================================================
         // Particle Update Functions
         //===========================================================
-        protected void ReduceSizeBasedOnLifetime(DefaultTexturedQuadParticle cParticle, float fElapsedTimeInSeconds)
+        protected void ReduceSizeBasedOnLifetime(SpriteParticle cParticle, float fElapsedTimeInSeconds)
         {
             cParticle.Size = ((1.0f - cParticle.NormalizedElapsedTime) / 1.0f) * cParticle.StartSize;
         }
 
-        protected void GenerateSmokeParticle(DefaultTexturedQuadParticle cParticle, float fElapsedTimeInSeconds)
+        protected void GenerateSmokeParticle(SpriteParticle cParticle, float fElapsedTimeInSeconds)
         {
             // If the Smoke Particle System is initialized
             if (mcSmokeParticleSystem != null && mcSmokeParticleSystem.IsInitialized)
@@ -190,7 +166,7 @@ namespace DPSF.ParticleSystems
                 if (RandomNumber.NextFloat() < mfAmountOfSmokeToRelease)
                 {
                     // Create a new Smoke Particle at the same Position as this Fire Particle
-                    DefaultTexturedQuadParticle cSmokeParticle = new DefaultTexturedQuadParticle();
+                    SpriteParticle cSmokeParticle = new SpriteParticle();
                     mcSmokeParticleSystem.InitializeParticle(cSmokeParticle);
                     cSmokeParticle.Position = cParticle.Position;
 
@@ -249,18 +225,27 @@ namespace DPSF.ParticleSystems
             return mfAmountOfSmokeToRelease * 2.0f;
         }
 
+        public Matrix ParticleSystemViewMatrix
+        {
+            get { return SpriteBatchSettings.TransformationMatrix; }
+            set
+            {
+                SpriteBatchSettings.TransformationMatrix = value;
+                mcSmokeParticleSystem.SpriteBatchSettings.TransformationMatrix = value;
+            }
+        }
+
 
 #if (WINDOWS)
         [Serializable]
 #endif
-        public class SmokeRingParticleSystem : DefaultTexturedQuadParticleSystem
+        class SmokeRingParticleSystem : DPSFDefaultSpriteParticleSystem<SpriteParticle, DefaultSpriteParticleVertex>
         {
             public SmokeRingParticleSystem(Game cGame) : base(cGame) { }
 
             public override void AutoInitialize(GraphicsDevice cGraphicsDevice, ContentManager cContentManager, SpriteBatch cSpriteBatch)
             {
-                InitializeTexturedQuadParticleSystem(cGraphicsDevice, cContentManager, 1000, 50000,
-                                                    UpdateVertexProperties, "Textures/Smoke");
+                InitializeSpriteParticleSystem(cGraphicsDevice, cContentManager, 1000, 50000, "Textures/Smoke");
                 LoadEvents();
             }
 
@@ -271,26 +256,23 @@ namespace DPSF.ParticleSystems
                 ParticleEvents.RemoveAllEvents();
                 ParticleEvents.AddEveryTimeEvent(UpdateParticlePositionAndVelocityUsingAcceleration);
                 ParticleEvents.AddEveryTimeEvent(UpdateParticleRotationUsingRotationalVelocity);
-                ParticleEvents.AddEveryTimeEvent(UpdateParticleTransparencyWithQuickFadeInAndSlowFadeOut, 100);
                 ParticleEvents.AddEveryTimeEvent(UpdateParticleWidthAndHeightUsingLerp);
-                ParticleEvents.AddEveryTimeEvent(UpdateParticleToFaceTheCamera, 200);
+                ParticleEvents.AddEveryTimeEvent(UpdateParticleTransparencyWithQuickFadeInAndSlowFadeOut, 100);
             }
 
             // Used to generate smoke coming off the ring of fire
-            public void InitializeSmokeRingParticle(DefaultTexturedQuadParticle cParticle)
+            public void InitializeSmokeRingParticle(SpriteParticle cParticle)
             {
                 cParticle.Lifetime = RandomNumber.Between(1.0f, 5.0f);
-
                 cParticle.Position = new Vector3(0, 10, 0);
-                cParticle.StartSize = RandomNumber.Next(10, 40);
-                cParticle.EndSize = RandomNumber.Next(20, 60);
+                cParticle.StartSize = RandomNumber.Next(30, 60);
+                cParticle.EndSize = RandomNumber.Next(150, 200);
                 cParticle.Size = cParticle.StartSize;
                 cParticle.Color = Color.White;
-                cParticle.Orientation = Orientation3D.Rotate(Matrix.CreateRotationZ(RandomNumber.Between(0, MathHelper.TwoPi)), cParticle.Orientation);
 
-                cParticle.Velocity = new Vector3(RandomNumber.Next(0, 30), RandomNumber.Next(10, 30), RandomNumber.Next(-20, 10));
+                cParticle.Velocity = new Vector3(RandomNumber.Next(0, 30), RandomNumber.Next(-30, -10), 0);
                 cParticle.Acceleration = Vector3.Zero;
-                cParticle.RotationalVelocity.Z = RandomNumber.Between(-MathHelper.Pi, MathHelper.Pi);
+                cParticle.RotationalVelocity = RandomNumber.Between(-MathHelper.Pi, MathHelper.Pi);
             }
         }
     }
