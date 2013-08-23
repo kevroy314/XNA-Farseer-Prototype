@@ -132,6 +132,9 @@ Content\Music\63.xnb
 Content\SoundEffects\beat.xnb
 Content\SoundEffects\doublebeat.xnb
 Content\Effects\Blur.xnb
+Content\CharacterSprites\Portal\InPortal0.xnb
+Content\CharacterSprites\Portal\OutPortal0.xnb
+Content\CharacterSprites\Portal\portal_collisionBox.xnb
 Content\Music\bgMusic.wma
 Content\Music\caketown.wma
 Content\Music\1.wma

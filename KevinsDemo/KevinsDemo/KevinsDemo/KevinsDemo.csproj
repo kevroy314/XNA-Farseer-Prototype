@@ -120,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AudioSystem\MusicManager.cs" />
+    <Compile Include="CharacterSystem\Portal.cs" />
     <Compile Include="DrawingSystem\SpriteAnimation.cs" />
     <Compile Include="FullScreenEffects\VariableBlurEffect.cs" />
     <Compile Include="GlobalGameOptions.cs" />

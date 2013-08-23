@@ -148,6 +148,10 @@ namespace DPSF.ParticleSystems
 		public Vector3 Position;            // The Position of the Particle in 3D space
 		public Vector2 TextureCoordinate;   // The Texture Coordinates of the Vertex
 		public Color Color;                 // The Color of the Particle
+        public VertexDeclaration VertexDeclaration
+    	{
+            get { return new VertexDeclaration(); }
+    	}
 
 		// Describe the vertex structure used to display a Particle
 		private static readonly VertexElement[] msVertexElements =
@@ -304,12 +308,12 @@ namespace DPSF.ParticleSystems
             // Else we're using the Reach profile, so fill the Reach Index Buffer instead.
             else
             {
-                IndexBufferReach[IndexBufferIndex++] = (short)(iIndex + 1);
-                IndexBufferReach[IndexBufferIndex++] = (short)(iIndex + 2);
-                IndexBufferReach[IndexBufferIndex++] = (short)(iIndex);
-                IndexBufferReach[IndexBufferIndex++] = (short)(iIndex + 1);
-                IndexBufferReach[IndexBufferIndex++] = (short)(iIndex + 3);
-                IndexBufferReach[IndexBufferIndex++] = (short)(iIndex + 2);
+                //IndexBufferReach[IndexBufferIndex++] = (short)(iIndex + 1);
+                //IndexBufferReach[IndexBufferIndex++] = (short)(iIndex + 2);
+                //IndexBufferReach[IndexBufferIndex++] = (short)(iIndex);
+                //IndexBufferReach[IndexBufferIndex++] = (short)(iIndex + 1);
+                //IndexBufferReach[IndexBufferIndex++] = (short)(iIndex + 3);
+                //IndexBufferReach[IndexBufferIndex++] = (short)(iIndex + 2);
             }
 		}
 

@@ -51,12 +51,21 @@ namespace KevinsDemo.CharacterSystem
         //The current animation index
         private int _currentDrawSpriteIndex;
 
+        private Portal _inPortal;
+        private Portal _outPortal;
+        private World _myWorld;
+        private ContentManager _myContentManager;
+        
         #endregion
 
         #region Constructor
 
         public Character(World world, ContentManager content, Vector2 position)
         {
+
+            _myWorld = world;
+            _myContentManager = content;
+
             //Load agent and collision textures
             //_agentTextures = content.Load<Texture2D>("CharacterSprites/chrono");
             _agentCollisionTextures = content.Load<Texture2D>("CharacterSprites/chrono_collisionBox_Small");
@@ -112,6 +121,9 @@ namespace KevinsDemo.CharacterSystem
 
             //Start facing towards the screen
             _currentDrawSpriteIndex = 0;
+
+            _inPortal = null;
+            _outPortal = null;
         }
 
         #endregion
@@ -121,12 +133,16 @@ namespace KevinsDemo.CharacterSystem
         public void Draw(SpriteBatch batch)
         {
             //Draw the texture at its current position
+            if (_inPortal != null) _inPortal.Draw(batch);
+            if (_outPortal != null) _outPortal.Draw(batch);
             _spriteAnimations[_currentDrawSpriteIndex].Draw(batch, _body.Position);
         }
 
         public void Update(GameTime gameTime)
         {
             //Update the current sprite being drawn
+            if (_inPortal != null) _inPortal.Update(gameTime);
+            if (_outPortal != null) _outPortal.Update(gameTime);
             _spriteAnimations[_currentDrawSpriteIndex].Update(gameTime);
         }
 
@@ -137,6 +153,8 @@ namespace KevinsDemo.CharacterSystem
             bool down = false;
             bool left = false;
             bool right = false;
+            bool inPortal = false;
+            bool outPortal = false;
             bool hit = false;
             if (input.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.W)||input.GamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickUp))
             {
@@ -165,7 +183,12 @@ namespace KevinsDemo.CharacterSystem
             if ((input.MouseState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed && input.PreviousMouseState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Released) ||
                 (input.GamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.A) && input.PreviousGamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.A)))
                 hit = true;
-
+            if ((input.MouseState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed && input.PreviousMouseState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Released) ||
+                (input.GamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.B) && input.PreviousGamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.B)))
+                inPortal = true;
+            if ((input.MouseState.MiddleButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed && input.PreviousMouseState.MiddleButton == Microsoft.Xna.Framework.Input.ButtonState.Released) ||
+                (input.GamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.X) && input.PreviousGamePadState.IsButtonDown(Microsoft.Xna.Framework.Input.Buttons.X)))
+                outPortal = true;
             //Given the buttons that were pressed, we save the old sprite animation index
             int oldDrawSpriteIndex = _currentDrawSpriteIndex;
 
@@ -207,6 +230,16 @@ namespace KevinsDemo.CharacterSystem
                 _currentDrawSpriteIndex -= 4;
             if (hit && _currentDrawSpriteIndex <= 3)
                 _currentDrawSpriteIndex += 4;
+
+            if (inPortal)
+            {
+                _inPortal = new Portal(this._myWorld, this._myContentManager, this._body.Position+new Vector2(this._origin.Y,-this._origin.X), true);
+                _outPortal = null;
+            }
+            if (outPortal && _inPortal != null)
+            {
+                _outPortal = new Portal(this._myWorld, this._myContentManager, this._body.Position + new Vector2(this._origin.Y, -this._origin.X), false);
+            }
 
             //If something new was pressed, make sure to restart the animation
             if (oldDrawSpriteIndex != _currentDrawSpriteIndex)
